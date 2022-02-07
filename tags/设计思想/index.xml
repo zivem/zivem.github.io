@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>设计思想 - 标签 - 我的全新 Hugo 网站</title>
+        <link>http://example.org/tags/%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3/</link>
+        <description>设计思想 - 标签 - 我的全新 Hugo 网站</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 23 Jul 2020 10:00:00 &#43;0000</lastBuildDate><atom:link href="http://example.org/tags/%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3/" rel="self" type="application/rss+xml" /><item>
+    <title>领域驱动模型DDD</title>
+    <link>http://example.org/posts/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E6%A8%A1%E5%9E%8Bddd/</link>
+    <pubDate>Thu, 23 Jul 2020 10:00:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/posts/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E6%A8%A1%E5%9E%8Bddd/</guid>
+    <description><![CDATA[领域驱动模型DDD 定义 在开发前，通常需要进行大量的业务知识梳理，而后到达软件设计的层面，最后才是开发。而在业务知识梳理的过程中，我们必然会形]]></description>
+</item></channel>
+</rss>

@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Spring - 标签 - 我的全新 Hugo 网站</title>
+        <link>http://example.org/tags/spring/</link>
+        <description>Spring - 标签 - 我的全新 Hugo 网站</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 17 Jul 2020 22:00:00 &#43;0000</lastBuildDate><atom:link href="http://example.org/tags/spring/" rel="self" type="application/rss+xml" /><item>
+    <title>Spring详解</title>
+    <link>http://example.org/posts/spring/</link>
+    <pubDate>Fri, 17 Jul 2020 22:00:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/posts/spring/</guid>
+    <description><![CDATA[Spring 概述 简介 Spring 是分层的 full-stack(全栈) 轻量级开源框架，以 IoC 和 AOP 为内核，提供了展现层 Spring MVC 和业务层事务管理等众多的企业级应用技术，还能]]></description>
+</item></channel>
+</rss>

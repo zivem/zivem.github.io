@@ -1,0 +1,21 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>分布式 - 标签 - 我的全新 Hugo 网站</title>
+        <link>http://example.org/tags/%E5%88%86%E5%B8%83%E5%BC%8F/</link>
+        <description>分布式 - 标签 - 我的全新 Hugo 网站</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Wed, 22 Jul 2020 16:10:00 &#43;0000</lastBuildDate><atom:link href="http://example.org/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="self" type="application/rss+xml" /><item>
+    <title>分布式网络通信</title>
+    <link>http://example.org/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/</link>
+    <pubDate>Wed, 22 Jul 2020 16:10:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/</guid>
+    <description><![CDATA[分布式架构网络通信 1.基本原理 要实现网络机器间的通讯，首先得来看看计算机系统网络通信的基本原理，在底层层面去看，网络通信需要做的就 是将流从一]]></description>
+</item><item>
+    <title>分布式理论</title>
+    <link>http://example.org/posts/%E5%88%86%E5%B8%83%E5%BC%8F/</link>
+    <pubDate>Wed, 22 Jul 2020 14:40:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/posts/%E5%88%86%E5%B8%83%E5%BC%8F/</guid>
+    <description><![CDATA[分布式 1.分布式系统架构 1.1概念 分布式系统是一个硬件或软件组件分布在不同的网络计算机上，彼此之间仅仅通过消息传递进行通信和协调 的系统。 俗的]]></description>
+</item></channel>
+</rss>

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Java基础概念 - 我的全新 Hugo 网站</title><meta name="Description" content=""><meta property="og:title" content="Java基础概念" />
+<meta property="og:description" content="Java基础-常见概念 范型 定义 把类型明确的工作推迟到创建对象或调用方法的时候才去明确的特殊的类型 设计原则 只要在编译时期没有出现警告，那么运行" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2020-07-10-java%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-07-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-07-10T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Java基础概念"/>
+<meta name="twitter:description" content="Java基础-常见概念 范型 定义 把类型明确的工作推迟到创建对象或调用方法的时候才去明确的特殊的类型 设计原则 只要在编译时期没有出现警告，那么运行"/>
+<meta name="application-name" content="我的全新 Hugo 网站">
+<meta name="apple-mobile-web-app-title" content="我的全新 Hugo 网站"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2020-07-10-java%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" /><link rel="next" href="http://example.org/posts/2020-07-13-linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Java基础概念",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2020-07-10-java%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5\/"
+        },"genre": "posts","keywords": "Java基础","wordcount":  4760 ,
+        "url": "http:\/\/example.org\/posts\/2020-07-10-java%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5\/","datePublished": "2020-07-10T00:00:00+00:00","dateModified": "2020-07-10T00:00:00+00:00","publisher": {
+            "@type": "Organization",
+            "name": "lei.zz"},"author": {
+                "@type": "Person",
+                "name": "lei.zz"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="" header-mobile=""><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="我的全新 Hugo 网站">我的全新 Hugo 网站</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="我的全新 Hugo 网站">我的全新 Hugo 网站</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Java基础概念</h1><h2 class="single-subtitle">Java常见的基础概念，泛型、自动拆箱、序列化、引用等</h2><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>lei.zz</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-10">2020-07-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4760 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 10 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#范型">范型</a>
+      <ul>
+        <li><a href="#定义">定义</a></li>
+        <li><a href="#设计原则">设计原则</a></li>
+        <li><a href="#为什么需要">为什么需要</a></li>
+        <li><a href="#类型擦除">类型擦除</a></li>
+      </ul>
+    </li>
+    <li><a href="#equals-和-">equals 和 ==</a>
+      <ul>
+        <li><a href="#使用">使用</a></li>
+      </ul>
+    </li>
+    <li><a href="#hashcodeequals">hashcode、equals</a></li>
+    <li><a href="#自动装箱">自动装箱</a></li>
+    <li><a href="#引用">引用</a>
+      <ul>
+        <li><a href="#强引用">强引用</a></li>
+        <li><a href="#软引用-softreference">软引用 SoftReference</a></li>
+        <li><a href="#软引用-weakreference">软引用 WeakReference</a></li>
+        <li><a href="#虚引用-phantomreference">虚引用 PhantomReference</a></li>
+      </ul>
+    </li>
+    <li><a href="#stringstringbufferstringbuilder">String，StringBuffer，StringBuilder</a>
+      <ul>
+        <li><a href="#string">String</a></li>
+        <li><a href="#stringbuffer">StringBuffer</a></li>
+        <li><a href="#stringbuilder">StringBuilder</a></li>
+      </ul>
+    </li>
+    <li><a href="#异常分类">异常分类</a>
+      <ul>
+        <li><a href="#throwable">Throwable</a></li>
+        <li><a href="#异常处理">异常处理</a></li>
+      </ul>
+    </li>
+    <li><a href="#重载重写">重载、重写</a>
+      <ul>
+        <li><a href="#重载">重载</a></li>
+        <li><a href="#重写"><strong>重写</strong></a></li>
+        <li><a href="#总结">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#抽象类接口">抽象类、接口</a>
+      <ul>
+        <li><a href="#方法实现">方法实现</a></li>
+        <li><a href="#实现">实现</a></li>
+        <li><a href="#构造器">构造器</a></li>
+        <li><a href="#与正常类区别">与正常类区别</a></li>
+        <li><a href="#访问修饰符">访问修饰符</a></li>
+        <li><a href="#多继承">多继承</a></li>
+        <li><a href="#添加新方法">添加新方法</a></li>
+        <li><a href="#使用场景">使用场景</a></li>
+      </ul>
+    </li>
+    <li><a href="#反射">反射</a></li>
+    <li><a href="#序列化与反序列化">序列化与反序列化</a>
+      <ul>
+        <li><a href="#序列化">序列化</a></li>
+      </ul>
+    </li>
+    <li><a href="#bionio">BIO、NIO</a>
+      <ul>
+        <li><a href="#bio--同步阻塞io">BIO  同步阻塞I/O</a></li>
+        <li><a href="#nio-同步非阻塞io">NIO 同步非阻[塞I/O</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="java基础-常见概念">Java基础-常见概念</h1>
+<h2 id="范型">范型</h2>
+<h3 id="定义">定义</h3>
+<ul>
+<li>把类型明确的工作推迟到创建对象或调用方法的时候才去明确的特殊的类型</li>
+</ul>
+<h3 id="设计原则">设计原则</h3>
+<ul>
+<li>
+<p>只要在编译时期没有出现警告，那么运行时期就不会出现ClassCastException异常</p>
+</li>
+<li>
+<p>参数化类型</p>
+<ul>
+<li>把类型当作是参数一样传递</li>
+<li>&lt;数据类型&gt; 只能是引用类型</li>
+</ul>
+</li>
+</ul>
+<h3 id="为什么需要">为什么需要</h3>
+<ul>
+<li>
+<p>早期Java是使用Object来代表任意类型的，但是向下转型有强转的问题，这样程序就不太安全</p>
+</li>
+<li>
+<p>带来的好处</p>
+<ul>
+<li>代码更加简洁【不用强制转换】</li>
+<li>程序更加健壮【只要编译时期没有警告，那么运行时期就不会出现ClassCastException异常】</li>
+<li>可读性和稳定性【在编写集合的时候，就限定了类型】</li>
+</ul>
+</li>
+</ul>
+<h3 id="类型擦除">类型擦除</h3>
+<ul>
+<li>将范型Java代码转化为普通代卖，在编译器编译过程中</li>
+<li>将所有泛型参数使用其最左边界（最顶级父类）类型替换。</li>
+<li>移除所有的类型参数</li>
+<li>带来的问题
+<ul>
+<li>
+<p>重载</p>
+<ul>
+<li>编译不通过</li>
+</ul>
+</li>
+<li>
+<p>catch</p>
+<ul>
+<li>匹配多种类型</li>
+</ul>
+</li>
+<li>
+<p>静态变量</p>
+<ul>
+<li>泛型类所有实例关联到同一字节码，静态变量共享</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>参考：https://segmentfault.com/a/1190000014120746</li>
+</ul>
+<h2 id="equals-和-">equals 和 ==</h2>
+<h3 id="使用">使用</h3>
+<ul>
+<li>
+<p>基本类型</p>
+<p>只能使用==</p>
+</li>
+<li>
+<p>对象</p>
+<p>都比较地址</p>
+</li>
+<li>
+<p>其它（包装类）</p>
+<ul>
+<li>&ldquo;==&ldquo;除了比较基本数据之外都是比较的内存地址</li>
+<li>&ldquo;equals&quot;除了没有没有重写equals方法的类之外都是比较的内容</li>
+</ul>
+</li>
+</ul>
+<h2 id="hashcodeequals">hashcode、equals</h2>
+<ul>
+<li>
+<p>两个对象用equals()比较返回true，那么两个对象的hashCode()方法必须返回相同的结果。</p>
+</li>
+<li>
+<p>两个对象用equals()比较返回false，不要求hashCode()方法也一定返回不同的值，但是最好返回不同值，亿提搞哈希表性能。</p>
+</li>
+<li>
+<p>重写equals()方法，必须重写hashCode()方法，以保证equals方法相等时两个对象hashcode返回相同的值。</p>
+</li>
+<li>
+<p>hash算法</p>
+<ul>
+<li><a href="https://blog.csdn.net/l1028386804/article/details/54573106" target="_blank" rel="noopener noreffer">https://blog.csdn.net/l1028386804/article/details/54573106</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="自动装箱">自动装箱</h2>
+<ul>
+<li>
+<p>装箱：基本类型转变为包装器类型的过程。Integer.valueOf()</p>
+</li>
+<li>
+<p>拆箱：包装器类型转变为基本类型的过程。intValue</p>
+</li>
+<li>
+<p>自动装箱</p>
+<ul>
+<li>每当需要一种类型的对象时，这种基本类型就自动地封装到与它相同类型的包装中。例：Integer a = 10;</li>
+</ul>
+</li>
+<li>
+<p>自动拆箱</p>
+<ul>
+<li>每当需要一个值时，被装箱对象中的值就被自动地提取出来，没必要再去调用intValue()和doubleValue()方法。例：int a = new Integer(10)</li>
+</ul>
+</li>
+</ul>
+<h2 id="引用">引用</h2>
+<h3 id="强引用">强引用</h3>
+<ul>
+<li>直接将对象赋值给变量</li>
+</ul>
+<h3 id="软引用-softreference">软引用 SoftReference</h3>
+<ul>
+<li>如果一个对象只具有软引用，则内存空间充足时，垃圾回收器就不会回收它；如果内存空间不足了，就会回收这些对象的内存</li>
+</ul>
+<h3 id="软引用-weakreference">软引用 WeakReference</h3>
+<ul>
+<li>弱引用与软引用的区别在于：只具有弱引用的对象拥有更短暂的生命周期</li>
+<li>一旦GC，不管当前内存空间足够与否，都会回收它的内存</li>
+</ul>
+<h3 id="虚引用-phantomreference">虚引用 PhantomReference</h3>
+<ul>
+<li>虚引用并不会决定对象的生命周期。如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收</li>
+<li>虚引用主要用来跟踪对象被垃圾回收器回收的活动。</li>
+<li>虚引用与软引用和弱引用的一个区别在于：虚引用必须和引用队列(ReferenceQueue)联合使用。当垃圾回收器准备回收一个对象时，如果发现它还有虚引用，就会在回收对象的内存之前，把这个虚引用加入到与之关联的引用队列中。</li>
+</ul>
+<h2 id="stringstringbufferstringbuilder">String，StringBuffer，StringBuilder</h2>
+<h3 id="string">String</h3>
+<ul>
+<li>字符串常量</li>
+<li>String 是不可变的对象, 因此在每次对 String 类型进行改变的时候其实都等同于生成了一个新的 String 对象，然后将指针指向新的 String 对象</li>
+</ul>
+<h3 id="stringbuffer">StringBuffer</h3>
+<ul>
+<li>字符串变量</li>
+<li>线程安全</li>
+<li>速度慢</li>
+</ul>
+<h3 id="stringbuilder">StringBuilder</h3>
+<ul>
+<li>字符串变量</li>
+<li>非线程安全</li>
+<li>速度快</li>
+</ul>
+<h2 id="异常分类">异常分类</h2>
+<h3 id="throwable">Throwable</h3>
+<ul>
+<li>
+<h4 id="error">Error</h4>
+</li>
+<li>
+<h4 id="exception">Exception</h4>
+<ul>
+<li>
+<h5 id="runtimeexception">RuntimeException</h5>
+<ul>
+<li>java.lang.NullPointerException&lt;空指针异常&gt;</li>
+<li>java.lang.IndexOutOfBoundsException&lt; 索引超出范围&gt;</li>
+<li>java.lang.ArrayIndexOutOfBoundsException&lt;数组索引越界&gt;</li>
+<li>java.lang.NumberFormatException&lt;转换为数值类型异常&gt;</li>
+<li>java.lang.ClassCastException &lt;类型转换异常&gt;</li>
+<li>java.lang.ArithmeticException &lt;算数异常&gt;</li>
+</ul>
+</li>
+<li>
+<h5 id="一般异常检查异常">一般异常(检查异常)</h5>
+<ul>
+<li>java.lang.ClassNotFoundException&lt;类未找到异常&gt;</li>
+<li>java.io.IOException&lt;IO异常&gt;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<h3 id="异常处理">异常处理</h3>
+<ul>
+<li>throw :一定会抛出该异常，通常出现在方法内部用于显式抛出</li>
+<li>throws :抛出有可能出现的异常，出现在方法声明区域（在参数列表后面）</li>
+<li>try ：try语句块一般用于将有可能出现异常的语句包裹</li>
+<li>catch：处理try语句块中可能出现的异常，一旦异常产生则进入对应的catch块(可以catch多种异常)</li>
+<li>finally：finally语句块中内容无论是否出现异常，都会执行，一般用执行资源清理与回收</li>
+</ul>
+</li>
+</ul>
+<h2 id="重载重写">重载、重写</h2>
+<h3 id="重载">重载</h3>
+<p><strong>方法重载是让类以统一的方式处理不同类型数据的一种手段。多个同名函数同时存在，具有不同的参数个数/类型。</strong></p>
+<p>重载Overloading是一个类中多态性的一种表现。</p>
+<p>Java的方法重载，就是在类中可以创建多个方法，它们具有相同的名字，但具有不同的参数和不同的定义。</p>
+<p>调用方法时通过传递给它们的不同参数个数和参数类型来决定具体使用哪个方法, 这就是多态性。</p>
+<p>重载的时候，方法名要一样，但是参数类型和个数不一样，返回值类型可以相同也可以不相同。无法以返回型别作为重载函数的区分标准。</p>
+<p>父类方法被默认修饰时，只能在同一包中，被其子类被重写，如果不在同一包则不能重写。</p>
+<p>父类的方法被protoeted时，不仅在同一包中，被其子类被重写，还可以不同包的子类重写。</p>
+<p><strong>重载的规则：</strong></p>
+<ul>
+<li>必须具有不同的参数列表；</li>
+<li>可以有不同的返回类型，只要参数列表不同就可以了；</li>
+<li>可以有不同的访问修饰符；</li>
+<li>可以抛出不同的异常；</li>
+</ul>
+<p><strong>特点</strong></p>
+<ul>
+<li>
+<p>在使用重载时只能通过不同的参数样式。例如，不同的参数类型，不同的参数个数，不同的参数顺序（当然，同一方法内的几个参数类型必须不一样，例如可以是fun(int, float)， 但是不能为fun(int, int)）；</p>
+</li>
+<li>
+<p>不能通过访问权限、返回类型、抛出的异常进行重载；</p>
+</li>
+<li>
+<p>方法的异常类型和数目不会对重载造成影响；</p>
+</li>
+<li>
+<p>对于继承来说，如果某一方法在父类中是访问权限是priavte，那么就不能在子类对其进行重载，如果定义的话，也只是定义了一个新方法，而不会达到重载的效果。</p>
+</li>
+</ul>
+<h3 id="重写"><strong>重写</strong></h3>
+<p><strong>规则</strong></p>
+<ul>
+<li>参数列表必须完全与被重写的方法相同，否则不能称其为重写而是重载。</li>
+<li>返回的类型必须一直与被重写的方法的返回类型相同，否则不能称其为重写而是重载。</li>
+<li>访问修饰符的限制一定要大于被重写方法的访问修饰符（public&gt;protected&gt;default&gt;private）</li>
+<li>重写方法一定不能抛出新的检查异常或者比被重写方法申明更加宽泛的检查型异常。例如：父类的一个方法申明了一个检查异常IOException，在重写这个方法是就不能抛出Exception,只能抛出IOException的子类异常，可以抛出非检查异常。</li>
+</ul>
+<h3 id="总结">总结</h3>
+<h4 id="overload重载">overload（重载）</h4>
+<ul>
+<li>参数类型、个数、顺序至少有一个不相同。</li>
+<li>不能重载只有返回值不同的方法名。</li>
+<li>存在于父类和子类、同类中。</li>
+</ul>
+<h4 id="override重写">override（重写）</h4>
+<ul>
+<li>方法名、参数、返回值相同。</li>
+<li>子类方法不能缩小父类方法的访问权限。</li>
+<li>子类方法不能抛出比父类方法更多的异常(但子类方法可以不抛出异常)。</li>
+<li>存在于父类和子类之间。</li>
+<li>方法被定义为final不能被重写。</li>
+</ul>
+<h2 id="抽象类接口">抽象类、接口</h2>
+<h3 id="方法实现">方法实现</h3>
+<ul>
+<li>
+<p><strong>抽象类</strong></p>
+</li>
+<li>
+<p>它可以有默认的方法实现</p>
+<ul>
+<li>抽象类可以没有抽象方法，有抽象方法必须是抽象类</li>
+<li>抽象方法不能被实现，只能放入子类实现</li>
+<li>子类是抽象类，可以不实现父类抽象类，否则，必须实现父类抽象类</li>
+</ul>
+</li>
+<li>
+<p><strong>接口</strong></p>
+</li>
+<li>
+<p>接口完全是抽象的。它根本不存在方法的实现</p>
+</li>
+</ul>
+<h3 id="实现">实现</h3>
+<ul>
+<li>
+<p><strong>抽象类</strong></p>
+</li>
+<li>
+<p>子类使用extends关键字来继承抽象类。如果子类不是抽象类的话，它需要提供抽象类中所有声明的方法的实现。</p>
+</li>
+<li>
+<p><strong>接口</strong></p>
+</li>
+<li>
+<p>子类使用关键字implements来实现接口。它需要提供接口中所有声明的方法的实现</p>
+</li>
+</ul>
+<h3 id="构造器">构造器</h3>
+<ul>
+<li>
+<p><strong>抽象类</strong></p>
+</li>
+<li>
+<p>抽象类可以有构造器。子类可以调用，主要用于成员变量的赋值</p>
+</li>
+<li>
+<p><strong>接口</strong></p>
+</li>
+<li>
+<p>接口不能有构造器</p>
+</li>
+</ul>
+<h3 id="与正常类区别">与正常类区别</h3>
+<ul>
+<li>
+<p><strong>抽象类</strong></p>
+</li>
+<li>
+<p>除了你不能实例化抽象类之外，它和普通Java类没有任何区别</p>
+</li>
+<li>
+<p><strong>接口</strong></p>
+</li>
+<li>
+<p>接口是完全不同的类型</p>
+</li>
+</ul>
+<h3 id="访问修饰符">访问修饰符</h3>
+<ul>
+<li>
+<p><strong>抽象类</strong></p>
+</li>
+<li>
+<p>抽象方法可以有main方法并且我们可以运行它</p>
+</li>
+<li>
+<p><strong>接口</strong></p>
+</li>
+<li>
+<p>接口没有main方法，因此我们不能运行它。</p>
+</li>
+</ul>
+<h3 id="多继承">多继承</h3>
+<ul>
+<li>
+<p><strong>抽象类</strong></p>
+</li>
+<li>
+<p>抽象方法可以继承一个类和实现多个接口</p>
+</li>
+<li>
+<p><strong>接口</strong></p>
+</li>
+<li>
+<p>接口只可以继承一个或多个其它接口</p>
+</li>
+</ul>
+<h3 id="添加新方法">添加新方法</h3>
+<ul>
+<li>
+<p><strong>抽象类</strong></p>
+</li>
+<li>
+<p>如果你往抽象类中添加新的方法，你可以给它提供默认的实现。因此你不需要改变你现在的代码。</p>
+</li>
+<li>
+<p><strong>接口</strong></p>
+</li>
+<li>
+<p>如果你往接口中添加方法，那么你必须改变实现该接口的类</p>
+</li>
+</ul>
+<h3 id="使用场景">使用场景</h3>
+<ul>
+<li>如果你拥有一些方法并且想让它们中的一些有默认实现，那么使用抽象类吧。</li>
+<li>如果你想实现多重继承，那么你必须使用接口。由于Java不支持多继承，子类不能够继承多个类，但可以实现多个接口。因此你就可以使用接口来解决它。</li>
+<li>如果基本功能在不断改变，那么就需要使用抽象类。如果不断改变基本功能并且使用接口，那么就需要改变所有实现了该接口的类。</li>
+</ul>
+<h2 id="反射">反射</h2>
+<p>对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意方法和属性；这种动态获取信息以及动态调用对象方法的功能称为java语言的反射机制。</p>
+<p>请看这篇文章：<a href="https://lei-zz.github.io/2020/07/13/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6.html" target="_blank" rel="noopener noreffer">Java反射机制</a></p>
+<h2 id="序列化与反序列化">序列化与反序列化</h2>
+<h3 id="序列化">序列化</h3>
+<h4 id="为什么需要序列化">为什么需要序列化</h4>
+<p>类的对象会随着程序的终止而被垃圾收集器销毁。如果要在不重新创建对象的情况下调用该类，该怎么做？这就可以通过序列化将数据转换为字节流。</p>
+<h4 id="定义-1">定义</h4>
+<p>将对象的状态信息转换为可以存储或传输的形式的过程。在序列化期间，对象将其当前状态写入到临时或持久性存储区。以后，可以通过从存储区中读取或反序列化对象的状态，重新创建该对象—</p>
+<h4 id="过程">过程</h4>
+<ul>
+<li>1、在Java中，只要一个类实现了java.io.Serializable接口，那么它就可以被序列化。</li>
+<li>2、通过ObjectOutputStream和ObjectInputStream对对象进行序列化及反序列化</li>
+<li>3、虚拟机是否允许反序列化，不仅取决于类路径和功能代码是否一致，一个非常重要的一点是两个类的序列化 ID 是否一致（就是 private static final long serialVersionUID）</li>
+<li>4、序列化并不保存静态变量。</li>
+<li>5、要想将父类对象也序列化，就需要让父类也实现Serializable 接口。</li>
+<li>6、Transient 关键字的作用是控制变量的序列化，在变量声明前加上该关键字，可以阻止该变量被序列化到文件中，在被反序列化后，transient 变量的值被设为初始值，如 int 型的是 0，对象型的是 null。</li>
+<li>7、服务器端给客户端发送序列化对象数据，对象中有一些数据是敏感的，比如密码字符串等，希望对该密码字段在序列化时，进行加密，而客户端如果拥有解密的密钥，只有在客户端进行反序列化时，才可以对密码进行读取，这样可以一定程度保证序列化对象的数据安全。</li>
+</ul>
+<h4 id="transient">Transient</h4>
+<p>控制变量的序列化，在变量声明前加上该关键字，可以阻止该变量被序列化到文件中，在被反序列化后，transient 变量的值被设为初始值</p>
+<h4 id="序列化id">序列化ID</h4>
+<ul>
+<li>
+<p>虚拟机是否允许反序列化，不仅取决于类路径和功能代码是否一致，一个非常重要的一点是两个类的序列化 ID 是否一致</p>
+</li>
+<li>
+<p>生成策略</p>
+<ul>
+<li>固定的 1L</li>
+<li>随机生成一个不重复的 long 类型数据（实际上是使用 JDK 工具生成）</li>
+</ul>
+</li>
+</ul>
+<h2 id="bionio">BIO、NIO</h2>
+<h3 id="bio--同步阻塞io">BIO  同步阻塞I/O</h3>
+<p>服务端会调用accept方法等待接收客户端的连接请求，一旦接收到一个连接请求，就可以建立通信套接字在这个通信套接字上进行读写操作，此时不能再接收其他客户端连接请求，只能等待同当前连接的客户端的操作执行完成</p>
+<h3 id="nio-同步非阻塞io">NIO 同步非阻[塞I/O</h3>
+<ul>
+<li>若服务端监听到客户端连接请求，便为其建立通信套接字(java中就是通道)，然后返回继续监听，若同时有多个客户端连接请求到来也可以全部收到，依次为它们都建立通信套接字。</li>
+<li>若服务端监听到来自已经创建了通信套接字的客户端发送来的数据，就会调用对应接口处理接收到的数据，若同时有多个客户端发来数据也可以依次进行处理。</li>
+<li>监听多个客户端的连接请求和接收数据请求同时还能监听自己时候有数据要发送。</li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-07-10</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/java%E5%9F%BA%E7%A1%80/">Java基础</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+            <a href="/posts/2020-07-13-linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" class="next" rel="next" title="Linux常用命令">Linux常用命令<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

@@ -1,0 +1,21 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Java基础 - 标签 - 我的全新 Hugo 网站</title>
+        <link>http://example.org/tags/java%E5%9F%BA%E7%A1%80/</link>
+        <description>Java基础 - 标签 - 我的全新 Hugo 网站</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Mon, 13 Jul 2020 10:30:00 &#43;0000</lastBuildDate><atom:link href="http://example.org/tags/java%E5%9F%BA%E7%A1%80/" rel="self" type="application/rss+xml" /><item>
+    <title>Java基础-反射机制</title>
+    <link>http://example.org/posts/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/</link>
+    <pubDate>Mon, 13 Jul 2020 10:30:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/posts/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/</guid>
+    <description><![CDATA[反射机制 思考 创建一个对象，有哪几种方式? 1、使用new关键字：这是我们最常见的也是最简单的创建对象的方式 2、使用Clone的方法：无论何时我]]></description>
+</item><item>
+    <title>Java基础概念</title>
+    <link>http://example.org/posts/java%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</link>
+    <pubDate>Fri, 10 Jul 2020 00:00:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/posts/java%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</guid>
+    <description><![CDATA[Java基础-常见概念 范型 定义 把类型明确的工作推迟到创建对象或调用方法的时候才去明确的特殊的类型 设计原则 只要在编译时期没有出现警告，那么运行]]></description>
+</item></channel>
+</rss>

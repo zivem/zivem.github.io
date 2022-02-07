@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>分布式理论 - 我的全新 Hugo 网站</title><meta name="Description" content=""><meta property="og:title" content="分布式理论" />
+<meta property="og:description" content="分布式 1.分布式系统架构 1.1概念 分布式系统是一个硬件或软件组件分布在不同的网络计算机上，彼此之间仅仅通过消息传递进行通信和协调 的系统。 俗的" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2020-07-22-%E5%88%86%E5%B8%83%E5%BC%8F/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-07-22T14:40:00+00:00" />
+<meta property="article:modified_time" content="2020-07-22T14:40:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="分布式理论"/>
+<meta name="twitter:description" content="分布式 1.分布式系统架构 1.1概念 分布式系统是一个硬件或软件组件分布在不同的网络计算机上，彼此之间仅仅通过消息传递进行通信和协调 的系统。 俗的"/>
+<meta name="application-name" content="我的全新 Hugo 网站">
+<meta name="apple-mobile-web-app-title" content="我的全新 Hugo 网站"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2020-07-22-%E5%88%86%E5%B8%83%E5%BC%8F/" /><link rel="prev" href="http://example.org/posts/2020-07-17-spring/" /><link rel="next" href="http://example.org/posts/2020-07-22-%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "分布式理论",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2020-07-22-%E5%88%86%E5%B8%83%E5%BC%8F\/"
+        },"genre": "posts","keywords": "分布式, 分布式事务","wordcount":  7520 ,
+        "url": "http:\/\/example.org\/posts\/2020-07-22-%E5%88%86%E5%B8%83%E5%BC%8F\/","datePublished": "2020-07-22T14:40:00+00:00","dateModified": "2020-07-22T14:40:00+00:00","publisher": {
+            "@type": "Organization",
+            "name": "lei.zz"},"author": {
+                "@type": "Person",
+                "name": "lei.zz"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="" header-mobile=""><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="我的全新 Hugo 网站">我的全新 Hugo 网站</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="我的全新 Hugo 网站">我的全新 Hugo 网站</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">分布式理论</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>lei.zz</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-22">2020-07-22</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 7520 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 16 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1分布式系统架构">1.分布式系统架构</a>
+      <ul>
+        <li><a href="#11概念">1.1概念</a></li>
+        <li><a href="#12分布式系统面临的问题">1.2.分布式系统面临的问题</a></li>
+        <li><a href="#13分布式理论一致性">1.3.分布式理论:一致性</a></li>
+        <li><a href="#14分布式理论cap定理">1.4.分布式理论:CAP定理</a></li>
+        <li><a href="#15分布式理论base-理论">1.5.分布式理论:BASE 理论</a></li>
+        <li><a href="#16一致性协议-2pc">1.6一致性协议 2PC</a></li>
+        <li><a href="#17一致性协议-3pc">1.7一致性协议 3PC</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="分布式">分布式</h1>
+<h2 id="1分布式系统架构">1.分布式系统架构</h2>
+<h3 id="11概念">1.1概念</h3>
+<p><strong>分布式系统是一个硬件或软件组件分布在不同的网络计算机上，彼此之间仅仅通过消息传递进行通信和协调 的系统。</strong></p>
+<p>俗的理解，所谓分布式系统，就是一个业务拆分成多个子业务，分布在不同的服务器节点，共同构成的系统称为分 布式系统，同一个分布式系统中的服务器节点在空间部署上是可以随意分布的，这些服务器可能放在不同的机柜 中，也可能在不同的机房中，甚至分布在不同的城市。</p>
+<p><strong>分布式与集群的区别</strong>:</p>
+<p>集群:多个人在一起作同样的事 。</p>
+<p>分布式 :多个人在一起作不同的事 。</p>
+<p><strong>分布式系统的特点</strong>:</p>
+<p>(1)分布性</p>
+<p>(2)对等性</p>
+<p>(3)并发性</p>
+<p>(4)缺乏全局时钟</p>
+<p>(5)故障总是会发生</p>
+<h3 id="12分布式系统面临的问题">1.2.分布式系统面临的问题</h3>
+<h4 id="1通信异常">1)通信异常</h4>
+<p>网络本身的不可靠性，因此每次网络通信都会伴随着网络不可用的风险(光纤、路由、DNS等硬件设备或系统的不 可用)，都会导致最终分布式系统无法顺利进行一次网络通信，另外，即使分布式系统各节点之间的网络通信能够 正常执行，其延时也会大于单机操作，存在巨大的延时差别，也会影响消息的收发过程，因此消息丢失和消息延迟 变的非常普遍。</p>
+<h4 id="2网络分区">2)网络分区</h4>
+<p>网络之间出现了网络不连通，但各个子网络的内部网络是正常的，从而导致整个系统的网络环境被切分成了若干个 孤立的区域，分布式系统就会出现局部小集群，在极端情况下，这些小集群会独立完成原本需要整个分布式系统才 能完成的功能，包括数据的事务处理，这就对分布式一致性提出非常大的挑战。</p>
+<h4 id="3节点故障">3)节点故障</h4>
+<p>节点故障是分布式系统下另一个比较常见的问题，指的是组成分布式系统的服务器节点出现的宕机或&quot;僵死&quot;现象，</p>
+<p>根据经验来说，每个节点都有可能出现故障，并且经常发生.</p>
+<h4 id="4三态">4)三态</h4>
+<p>分布式系统每一次请求与响应存在特有的“三态”概念，即成功、失败和超时。</p>
+<p>分布式系统中，由于网络是不可靠的，虽然绝大部分情况下，网络通信能够接收到成功或失败的响应，但当网络出 现异常的情况下，就会出现超时现象，通常有以下两种情况:</p>
+<ol>
+<li>
+<p>由于网络原因，该请求并没有被成功的发送到接收方，而是在发送过程就发生了丢失现象。</p>
+</li>
+<li>
+<p>该请求成功的被接收方接收后，并进行了处理，但在响应反馈给发送方过程中，发生了消息丢失现象。</p>
+</li>
+</ol>
+<h3 id="13分布式理论一致性">1.3.分布式理论:一致性</h3>
+<h4 id="1什么是分布式一致性">1)什么是分布式一致性</h4>
+<p>分布式数据一致性，指的是数据在多份副本中存储时，各副本中的数据是一致的。</p>
+<h4 id="2副本一致性">2)副本一致性</h4>
+<p>分布式系统当中，数据往往会有多个副本。如果是一台数据库处理所有的数据请求，那么通过ACID四原则，基本 可以保证数据的一致性。而多个副本就需要保证数据会有多份拷贝。这就带来了同步的问题，因为我们几乎没有办 法保证可以同时更新所有机器当中的包括备份所有数据。 网络延迟，即使我在同一时间给所有机器发送了更新数据 的请求，也不能保证这些请求被响应的时间保持一致存在时间差，就会存在某些机器之间的数据不一致的情况。</p>
+<h4 id="3一致性分类">3)一致性分类</h4>
+<h5 id="强一致性">强一致性</h5>
+<p>这种一致性级别是最符合用户直觉的，它要求系统写入什么，读出来的也会是什么，用户体验好，但实现起来往往 对系统的性能影响大。但是强一致性很难实现。</p>
+<h5 id="弱一致性">弱一致性</h5>
+<p>这种一致性级别约束了系统在写入成功后，不承诺立即可以读到写入的值，也不承诺多久之后数据能够达到一致，</p>
+<p>但会尽可能地保证到某个时间级别(比如秒级别)后，数据能够达到一致状态。</p>
+<h5 id="最终一致性">最终一致性</h5>
+<p>最终一致性是所有分布式一致性模型当中最弱的。可以认为是没有任何优化的“最”弱一致性，它的意思是说，我不考虑 所有的中间状态的影响，只保证当没有新的更新之后，经过一段时间之后，最终系统内所有副本的数据是正确的。 它最大程度上保证了系统的并发能力，也因此，在高并发的场景下，它也是使用最广的一致性模型。</p>
+<h3 id="14分布式理论cap定理">1.4.分布式理论:CAP定理</h3>
+<h4 id="cap定理">CAP定理</h4>
+<p><strong>CAP 理论含义是，一个分布式系统不可能同时满足一致性(C:Consistency)，可用性(A: Availability)和分区容错 性(P:Partition tolerance)这三个基本需求，最多只能同时满足其中的2个。</strong></p>
+<h5 id="c---consistency-一致性">C - Consistency 一致性</h5>
+<blockquote>
+<p>分布式系统当中的一致性指的是所有节点的数据一致，或者说是所有副本的数据一致</p>
+</blockquote>
+<p>一致性是值写操作后读操作可以读到最新的数据状态,当数据分布在多个节点上时,从任意节点读取到的数据都是最新的.</p>
+<p>商品信息读写要满足一致性需要实现如下目标:</p>
+<p>1.商品服务写入主数据库成功, 则想从数据库查询数据也成功</p>
+<p>2.商品服务写入主数据库失败,则向从数据库查询也失败</p>
+<p><strong>如何实现一 致性?</strong></p>
+<p>1.写入主数据库后要数据同步到从数据库</p>
+<p>2.写入主数据库后,在向从数据库同步期间要将从数据库锁定, 等待同步完成后在释放锁,以免在写新数据后,向从数据 库查询到旧的数据.</p>
+<p><strong>分布式一致性的特点:</strong></p>
+<p>1.由于存在数据库同步过程,写操作的响应会有一定的延迟</p>
+<p>2.为了保定数据的一致性,对资源暂时锁定,待数据同步完成后释放锁定资源</p>
+<p>3.如果请求数据同步失败的节点则会返回错误信息, 一定不会返回旧数据.</p>
+<h5 id="a---availability-可用性">A - Availability 可用性</h5>
+<blockquote>
+<p>Reads and writes always succeed. 也就是说系统一直可用，而且服务一直保持正常</p>
+</blockquote>
+<p>可用性是指任何操作都可以得到响应的结果,且不会出现响应超时或响应错误。</p>
+<p>商品信息读写要满足可用性需要实现如下目标:</p>
+<p>1.从数据库接收到数据库查询的请求则立即能够响应数据查询结果</p>
+<p>2.从数据库不允许出现响应超时或错误</p>
+<p><strong>如何实现可用性?</strong></p>
+<p>1.写入主数据库后要将数据同步到从数据</p>
+<p>2.由于要保证数据库的可用性,不可以将数据库中资源锁定</p>
+<p>3.即使数据还没有同步过来,从数据库也要返回查询数据, 哪怕是旧数据,但不能返回错误和超时.</p>
+<h5 id="p---partition-tolerance-分区容错性">P - Partition tolerance 分区容错性</h5>
+<blockquote>
+<p>系统在遇到一些节点或者网络分区故障的时候，仍然能够提供满足一致性和可用性的服务</p>
+</blockquote>
+<p>分布式系统的各个节点部署在不同的子网中, 不可避免的会出现由于网络问题导致节点之间通信失败,此时仍可以对外提供服务, 这个就是分区容错性 (分区容忍性).</p>
+<p>商品信息读写要满足分区容错性需要实现如下目标:</p>
+<p>1.主数据库想从数据库同步数据失败不形象写操作</p>
+<p>2.其中一个节点挂掉不会影响另一个节点对外提供服务</p>
+<p><strong>如何实现分区容错性?</strong></p>
+<p>1.尽量使用异步取代同步操作,举例 使用异步方式将数据从主数据库同步到从数据库, 这样节点之间能有效的实现松 耦合;</p>
+<p>2.添加数据库节点,其中一个从节点挂掉,由其他从节点提供服务</p>
+<h4 id="cap只能-3-选-2">CAP只能 3 选 2</h4>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/assets/img/post/system/cap.jpg"
+        data-srcset="/assets/img/post/system/cap.jpg, /assets/img/post/system/cap.jpg 1.5x, /assets/img/post/system/cap.jpg 2x"
+        data-sizes="auto"
+        alt="/assets/img/post/system/cap.jpg"
+        title="cap" /></p>
+<p>有用户向N1发送了请求更改了数据，将数据库从V0更新成了V1。由于网络断开，所以N2数据库依然是V0，如果这个时候 有一个请求发给了N2，但是N2并没有办法可以直接给出最新的结果V1，这个时候该怎么办呢?</p>
+<p>这个时候无法两种方法，一种是将错就错，将错误的V0数据返回给用户。第二种是阻塞等待，等待网络通信恢复，N2中 的数据更新之后再返回给用户。显然前者牺牲了一致性，后者牺牲了可用性。</p>
+<p>这个例子虽然简单，但是说明的内容却很重要。在分布式系统当中，CAP三个特性我们是无法同时满足的，必然要舍弃一 个。三者舍弃一个，显然排列组合一共有三种可能。</p>
+<ul>
+<li>
+<p>舍弃A(可用性)，保留CP(一致性和分区容错性)</p>
+<blockquote>
+<p>一个系统保证了一致性和分区容错性，舍弃可用性。也就是说在极端情况下，允许出现系统无法访问的情况出现，这个 时候往往会牺牲用户体验，让用户保持等待，一直到系统数据一致了之后，再恢复服务。</p>
+</blockquote>
+</li>
+<li>
+<p>舍弃C(一致性)，保留AP(可用性和分区容错性)</p>
+<blockquote>
+<p>这种是大部分的分布式系统的设计，保证高可用和分区容错，但是会牺牲一致性。</p>
+</blockquote>
+</li>
+<li>
+<p>舍弃P(分区容错性)，保留CA(一致性和可用性)</p>
+<blockquote>
+<p>如果要舍弃P，那么就是要舍弃分布式系统，CAP也就无从谈起了。可以说P是分布式系统的前提，所以这种情况是不存在 的。</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="能否同时满足3个">能否同时满足3个？</h4>
+<p>网络分区存在，需要保证C一致性，通信失败，无法保证一致性，若需要保证一致性，需要停止服务，解决网络分区问题，此时无法保证A可用性。</p>
+<p>P是分布式系统前提，不能保证P，则使用单节点系统。</p>
+<h3 id="15分布式理论base-理论">1.5.分布式理论:BASE 理论</h3>
+<h4 id="base">BASE</h4>
+<p>全称:Basically Available(基本可用)，Soft state(软状态),和 Eventually consistent(最终一致性)三个 短语的缩写，来自 ebay 的架构师提出。</p>
+<p>BASE是对CAP中一致性和可用性权衡的结果。</p>
+<p>BASE理论的核心思想是:<strong>即使无法做到强一致性，但每个应用都可 以根据自身业务特点，采用适当的方式来使系统达到最终一致性。</strong></p>
+<h4 id="basically-available基本可用">Basically Available(基本可用)</h4>
+<p><strong>基本可用是指分布式系统在出现不可预知故障的时候，允许损失部分可用性——但请注意，这绝不等价于系统不可用。</strong></p>
+<p><strong>响应时间上的损失</strong>:</p>
+<p>正常情况下，一个在线搜索引擎需要在0.5秒之内返回给用户相应的查询结果，但由于出 现故障(比如系统部分机房发生断电或断网故障)，查询结果的响应时间增加到了1~2秒。</p>
+<p>一个系统保证了一致性和分区容错性，舍弃可用性。也就是说在极端情况下，允许出现系统无法访问的情况出现，这个 时候往往会牺牲用户体验，让用户保持等待，一直到系统数据一致了之后，再恢复服务。</p>
+<p>如果要舍弃P，那么就是要舍弃分布式系统，CAP也就无从谈起了。可以说P是分布式系统的前提，所以这种情况是不存在 的。</p>
+<p><strong>功能上的损失</strong>:</p>
+<p>正常情况下，在一个电子商务网站(比如淘宝)上购物，消费者几乎能够顺利地完成每一笔 订单。但在一些节日大促购物高峰的时候(比如双十一、双十二)，由于消费者的购物行为激增，为了保护 系统的稳定性(或者保证一致性)，部分消费者可能会被引导到一个降级页面。</p>
+<h4 id="soft-state软状态">Soft state(软状态)</h4>
+<p>什么是软状态呢?相对于一致性，要求多个节点的数据副本都是一致的，这是一种 “硬状态”。</p>
+<p><strong>软状态指的是:允许系统中的数据存在中间状态，并认为该状态不影响系统的整体可用性，即允许系统在多个不同 节点的数据副本之间进行数据同步的过程中存在延迟。</strong></p>
+<h4 id="eventually-consistent最终一致性">Eventually consistent(最终一致性)</h4>
+<p>最终一致性强调的是系统中所有的数据副本，在经过一段时间的同步后，最终能够达到一个一致的状态。</p>
+<p>因此最终一致性的本质是需要系统保证最终数据能够达到一致，而不需要实时保证系统数据的强一致性。</p>
+<h5 id="因果一致性">因果一致性</h5>
+<p>如果节点A更新完成某个数据通知了节点B，那么节点B之后对该数据的访问和修改都基于A更新后的值。与此同时，和节点A无因果关系的就节点C的数据访问则没有这样的限制。</p>
+<h5 id="读已之所写">读已之所写</h5>
+<p>节点A更新一个数据后，它自身总是能够访问到自身更新过的最新值，而不会看到旧值，也就是说，对于单个数据获取者来说，其读取到的数据，一定不会比上次写入的值旧。因此，读已之所写也可以看成是一种特殊的因果一致性。</p>
+<h5 id="会话一致性">会话一致性</h5>
+<p>会话一致性将对系统数据的访问过程框定在了一个会话当中；系统能保证在同一个有效的会话中实现“读已之所写”的一致性，也就是说，执行更新操作之后，客户端能够在同一个会话中始终读取到该数据项的最新值。</p>
+<h5 id="单调读一致性">单调读一致性</h5>
+<p>单调读一致性是指如果一个节点从系统中读取一个数据项某个值之后，那么系统对于该节点后续的任何数据访问都不应该返回更旧的值。</p>
+<h5 id="单调写一致性">单调写一致性</h5>
+<p>指一个系统要能够保证来自同一个节点的写操作被顺序执行。</p>
+<p><strong>BASE理论面向大型高可用可扩展的分布式系统，和传统食物的ACID是相反的，它完全不同于ACID的强一致模型，而是通过牺牲强一致性来获得可用性，并允许数据在同一时间段是不一致的，但最终要保证数据一致。</strong></p>
+<h3 id="16一致性协议-2pc">1.6一致性协议 2PC</h3>
+<h4 id="什么是2pc">什么是2PC</h4>
+<p>2PC ( Two-Phase Commit缩写)即两阶段提交协议，是将整个事务流程分为两个阶段，准备阶段(Prepare phase)、提交阶段(commit phase)，2是指两个阶段，P是指准备阶段，C是指提交阶段。</p>
+<p>数据库两阶段提交如下：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/assets/img/post/system/2pc.png"
+        data-srcset="/assets/img/post/system/2pc.png, /assets/img/post/system/2pc.png 1.5x, /assets/img/post/system/2pc.png 2x"
+        data-sizes="auto"
+        alt="/assets/img/post/system/2pc.png"
+        title="image-20200722140514552" /></p>
+<p>两个阶段过程:</p>
+<ol>
+<li>准备阶段(Prepare phase):事务管理器给每个参与者发送Prepare消息，每个数据库参与者在本地执行事 务，并写本地的Undo/Redo日志，此时事务没有提交。 (Undo日志是记录修改前的数据，用于数据库回 滚，Redo日志是记录修改后的数据，用于提交事务后写入数 据文件)</li>
+<li>提交阶段(commit phase):如果事务管理器收到了参与者的执行失败或者超时消息时，直接给每个参与者 发送回滚(Rollback)消息;否则，发送提交(Commit)消息;参与者根据事务管理器的指令执行提交或者回滚操作，并释放事务处理过程中使用的锁资源。注意:必须在最后阶段释放锁资源。</li>
+</ol>
+<h4 id="2pc执行流程">2PC执行流程</h4>
+<h5 id="事务提交流程">事务提交流程</h5>
+<p><strong>成功执行事务</strong></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/assets/img/post/system/2pc_success.png"
+        data-srcset="/assets/img/post/system/2pc_success.png, /assets/img/post/system/2pc_success.png 1.5x, /assets/img/post/system/2pc_success.png 2x"
+        data-sizes="auto"
+        alt="/assets/img/post/system/2pc_success.png"
+        title="image-20200722140730328" /></p>
+<p><strong>阶段一:</strong></p>
+<ul>
+<li>
+<p>事务询问</p>
+<p>协调者向所有的参与者发送事务内容，询问是否可以执行事务提交操作，并开始等待各参与者的响应。</p>
+</li>
+<li>
+<p>执行事务 (写本地的Undo/Redo日志)</p>
+</li>
+<li>
+<p>各参与者向协调者反馈事务询问的响应</p>
+</li>
+</ul>
+<p>总结: 各个参与者进行投票是否让事务进行.</p>
+<p><strong>阶段二:</strong></p>
+<ul>
+<li>
+<p>发送提交请求:</p>
+<p>协调者向所有参与者发出 commit 请求。</p>
+</li>
+<li>
+<p>事务提交:</p>
+<p>参与者收到 commit 请求后，会正式执行事务提交操作，并在完成提交之后释放整个事务执行期间占用的事务资 源。</p>
+</li>
+<li>
+<p>反馈事务提交结果: 参与者在完成事务提交之后，向协调者发送 Ack 信息。</p>
+</li>
+<li>
+<p>完成事务:</p>
+<p>协调者接收到所有参与者反馈的 Ack 信息后，完成事务。</p>
+</li>
+</ul>
+<p><strong>中断事务步骤如下:</strong></p>
+<p>假如任何一个参与者向协调者反馈了No响应，或者在等待超时之后，协调者尚无法接收到所有参与者的反馈响 应，那么就会中断事务</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/assets/img/post/system/2pc_interrupt.png"
+        data-srcset="/assets/img/post/system/2pc_interrupt.png, /assets/img/post/system/2pc_interrupt.png 1.5x, /assets/img/post/system/2pc_interrupt.png 2x"
+        data-sizes="auto"
+        alt="/assets/img/post/system/2pc_interrupt.png"
+        title="image-20200722141201899" /></p>
+<p><strong>阶段一</strong>:</p>
+<ul>
+<li>
+<p>事务询问 协调者向所有的参与者发送事务内容，询问是否可以执行事务提交操作，并开始等待各参与者的响应。</p>
+</li>
+<li>
+<p>执行事务 (写本地的Undo/Redo日志)</p>
+</li>
+<li>
+<p>各参与者向协调者反馈事务询问的响应</p>
+</li>
+</ul>
+<p>总结: 各个参与者进行投票是否让事务进行</p>
+<p><strong>阶段二</strong></p>
+<ul>
+<li>
+<p>发送回滚请求:
+协调者向所有参与者发出 Rollback 请求。</p>
+</li>
+<li>
+<p>事务回滚:
+参与者接收到 Rollback 请求后，会利用其在阶段一中记录的 Undo 信息来执行事务回滚操作，并在完成回滚之后释放在整个事务执行期间占用的资源。</p>
+</li>
+<li>
+<p>反馈事务回滚结果:</p>
+<p>参与者在完成事务回滚之后，向协调者发送 Ack 信息。</p>
+</li>
+<li>
+<p>中断事务:</p>
+<p>协调者接收到所有参与者反馈的 Ack 信息后，完成事务中断。</p>
+</li>
+</ul>
+<p>从上面的逻辑可以看出，二阶段提交就做了2个事情:投票，执行。</p>
+<h5 id="pc-优点缺点">PC 优点缺点</h5>
+<p><strong>优点</strong></p>
+<p>原理简单，实现方便</p>
+<p><strong>缺点</strong></p>
+<p><strong>同步阻塞，单点问题，数据不一致，过于保守</strong></p>
+<ul>
+<li>同步阻塞:</li>
+</ul>
+<p>二阶段提交协议存在最明显也是最大的一个问题就是同步阻塞，在二阶段提交的执行过程中，所有参与该事务操作 的逻辑都处于阻塞状态，也就是说，各个参与者在等待其他参与者响应的过程中，无法进行其他操作。这种同步阻 塞极大的限制了分布式系统的性能。</p>
+<ul>
+<li>单点问题:</li>
+</ul>
+<p>协调者在整个二阶段提交过程中很重要，如果协调者在提交阶段出现问题，那么整个流程将无法运转，更重要的 是:其他参与者将会处于一直锁定事务资源的状态中，而无法继续完成事务操作。</p>
+<ul>
+<li>数据不一致:</li>
+</ul>
+<p>假设当协调者向所有的参与者发送 commit 请求之后，发生了局部网络异常或者是协调者在尚未发送完所有 commit 请求之前自身发生了崩溃，导致最终只有部分参与者收到了 commit 请求。这将导致严重的数据不一致问 题。</p>
+<ul>
+<li>过于保守:</li>
+</ul>
+<p>如果在二阶段提交的提交询问阶段中，参与者出现故障而导致协调者始终无法获取到所有参与者的响应信息的话， 这时协调者只能依靠其自身的超时机制来判断是否需要中断事务，显然，这种策略过于保守。换句话说，二阶段提 交协议没有设计较为完善的容错机制，任意一个节点失败都会导致整个事务的失败。</p>
+<h3 id="17一致性协议-3pc">1.7一致性协议 3PC</h3>
+<h4 id="什么是三阶段提交">什么是三阶段提交</h4>
+<p>3PC，全称 “three phase commit”，是 2PC 的改进版，将 2PC 的 “提交事务请求” 过程一分为二，共形成了由 CanCommit、PreCommit和doCommit三个阶段组成的事务处理协议。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/assets/img/post/system/3pc.png"
+        data-srcset="/assets/img/post/system/3pc.png, /assets/img/post/system/3pc.png 1.5x, /assets/img/post/system/3pc.png 2x"
+        data-sizes="auto"
+        alt="/assets/img/post/system/3pc.png"
+        title="image-20200722142355218" /></p>
+<h4 id="阶段一cancommit">阶段一:CanCommit</h4>
+<ul>
+<li>
+<p>事务询问</p>
+<p>协调者向所有的参与者发送一个包含事务内容的canCommit请求，询问是否可以执行事务提交操作，并开始等待 各参与者的响应。</p>
+</li>
+<li>
+<p>各参与者向协调者反馈事务询问的响应</p>
+<p>参与者在接收到来自协调者的包含了事务内容的canCommit请求后，正常情况下，如果自身认为可以顺利执行事 务，则反馈Yes响应，并进入预备状态，否则反馈No响应。</p>
+</li>
+</ul>
+<h4 id="阶段二precommit">阶段二:PreCommit</h4>
+<p>协调者在得到所有参与者的响应之后，会根据结果有2种执行操作的情况:执行事务预提交，或者中断事务 假如所有参与反馈的都是Yes，那么就会执行事务预提交。</p>
+<ul>
+<li>
+<p><strong>执行事务预提交分为 3 个步骤</strong></p>
+<ul>
+<li>
+<p>发送预提交请求:</p>
+<p>协调者向所有参与者节点发出preCommit请求，并进入prepared阶段。</p>
+</li>
+<li>
+<p>事务预提交:</p>
+<p>参与者接收到preCommit请求后，会执行事务操作，并将Undo和Redo信息记录到事务日志中。</p>
+</li>
+<li>
+<p>各参与者向协调者反馈事务执行的结果:</p>
+<p>若参与者成功执行了事务操作，那么反馈Ack</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>若任一参与者反馈了No响应，或者在等待超时后，协调者尚无法接收到所有参与者反馈，则中断事务</p>
+<ul>
+<li><strong>中断事务也分为2个步骤:</strong>
+<ul>
+<li>发送中断请求: 协调者向所有参与者发出abort请求。</li>
+<li>中断事务: 无论是收到来自协调者的abort请求或者等待协调者请求过程中超时，参与者都会中断事务</li>
+</ul>
+</li>
+</ul>
+<h4 id="阶段三do-commit">阶段三:do Commit</h4>
+<p>该阶段做真正的事务提交或者完成事务回滚，所以就会出现两种情况:</p>
+<ul>
+<li>
+<p>执行事务提交</p>
+<ul>
+<li>
+<p>发送提交请求:</p>
+<p>进入这一阶段，假设协调者处于正常工作状态，并且它接收到了来自所有参与者的Ack响应，那么他将从预提交状态转化为提交状态，并向所有的参与者发送doCommit请求。</p>
+</li>
+<li>
+<p>事务提交:</p>
+<p>参与者接收到doCommit请求后，会正式执行事务提交操作，并在完成提交之后释放整个事务执行过程中占用的事 务资源。</p>
+</li>
+<li>
+<p>反馈事务提交结果:</p>
+<p>参与者在完成事务提交后，向协调者发送Ack响应。</p>
+</li>
+<li>
+<p>完成事务:</p>
+<p>协调者接收到所有参与者反馈的Ack消息后，完成事务。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>中断事务</p>
+<ul>
+<li>
+<p>发送中断请求:</p>
+<p>协调者向所有的参与者节点发送abort请求。</p>
+</li>
+<li>
+<p>事务回滚:</p>
+<p>参与者收到abort请求后，会根据记录的Undo信息来执行事务回滚，并在完成回滚之后释放整 个事务执行期间占用的资源。</p>
+</li>
+<li>
+<p>反馈事务回滚结果:</p>
+<p>参与者在完成事务回滚后，向协调者发送Ack消息。</p>
+</li>
+<li>
+<p>中断事务:</p>
+<p>协调者接收到所有参与者反馈的Ack消息后，中断事务。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>注意:</strong></p>
+<p>一旦进入阶段三，可能会出现 2 种故障:</p>
+<ul>
+<li>协调者出现问题</li>
+<li>协调者和参与者之间的网络故障</li>
+</ul>
+<p>如果出现了任一一种情况，最终都会导致参与者无法收到 doCommit 请求或者 abort 请求，针对这种情况，参与者都会在等待超时之后，继续进行事务提交.</p>
+<h4 id="2pc对比3pc">2PC对比3PC</h4>
+<p>1.首先对于协调者和参与者都设置了超时机制(在2PC中，只有协调者拥有超时机制，即如果在一定时间内没有收 到参与者的消息则默认失败),主要是避免了参与者在长时间无法与协调者节点通讯(协调者挂掉了)的情况下，无 法释放资源的问题，因为参与者自身拥有超时机制会在超时后，自动进行本地commit从而进行释放资源。而这种 机制也侧面降低了整个事务的阻塞时间和范围。</p>
+<p>2.通过CanCommit、PreCommit、DoCommit三个阶段的设 计，相较于2PC而言，多设置了一个缓冲阶段保证了在最后提交阶段之前各参与节点的状态是一致的 。</p>
+<p>3.PreCommit是一个缓冲，保证了在最后提交阶段之前各参与节点的状态是一致的。</p>
+<p><strong>问题:3PC协议并没有完全解决数据不一致问题。</strong></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-07-22</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a>,&nbsp;<a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/">分布式事务</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2020-07-17-spring/" class="prev" rel="prev" title="Spring详解"><i class="fas fa-angle-left fa-fw"></i>Spring详解</a>
+            <a href="/posts/2020-07-22-%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" class="next" rel="next" title="分布式网络通信">分布式网络通信<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
