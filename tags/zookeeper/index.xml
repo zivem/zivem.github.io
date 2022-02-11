@@ -1,14 +1,14 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>ZooKeeper - 标签 - 我的全新 Hugo 网站</title>
-        <link>http://example.org/tags/zookeeper/</link>
+        <link>http://lei-zz.github.io/tags/zookeeper/</link>
         <description>ZooKeeper - 标签 - 我的全新 Hugo 网站</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 28 Jul 2020 00:00:00 &#43;0000</lastBuildDate><atom:link href="http://example.org/tags/zookeeper/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 28 Jul 2020 00:00:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/tags/zookeeper/" rel="self" type="application/rss+xml" /><item>
     <title>ZooKeeper基本理解</title>
-    <link>http://example.org/posts/zookeeper/</link>
+    <link>http://lei-zz.github.io/posts/zookeeper/</link>
     <pubDate>Tue, 28 Jul 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>http://example.org/posts/zookeeper/</guid>
+    <guid>http://lei-zz.github.io/posts/zookeeper/</guid>
     <description><![CDATA[Zookeeper 简介 使用场景 ZooKeeper最主要的使用场景是分布式系统的分布式协同服务。 分布式系统服务进程通信方式 通过网络进行信息共享 通过共享存储 Zo]]></description>
 </item></channel>
 </rss>

@@ -1,14 +1,14 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Tomcat - 标签 - 我的全新 Hugo 网站</title>
-        <link>http://example.org/tags/tomcat/</link>
+        <link>http://lei-zz.github.io/tags/tomcat/</link>
         <description>Tomcat - 标签 - 我的全新 Hugo 网站</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 14 Jul 2020 22:40:00 &#43;0000</lastBuildDate><atom:link href="http://example.org/tags/tomcat/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 14 Jul 2020 22:40:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/tags/tomcat/" rel="self" type="application/rss+xml" /><item>
     <title>Tomcat详解</title>
-    <link>http://example.org/posts/tomcat/</link>
+    <link>http://lei-zz.github.io/posts/tomcat/</link>
     <pubDate>Tue, 14 Jul 2020 22:40:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>http://example.org/posts/tomcat/</guid>
+    <guid>http://lei-zz.github.io/posts/tomcat/</guid>
     <description><![CDATA[Tomcat详解 目录结构 bin：tomocat启动文件 conf 1.logging.properties 日志配置； 2.server.xml服务器端口等配置； 3.tomcat-users.xml tomcat用户角色、权限配]]></description>
 </item></channel>
 </rss>

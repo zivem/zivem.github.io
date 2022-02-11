@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>JVM基础 - 我的全新 Hugo 网站</title><meta name="Description" content=""><meta property="og:title" content="JVM基础" />
+<meta property="og:description" content="JVM基础 如何避免OutOfMemory hotspot 为了避免由新生代对象晋升道老年代，导致老年代空间不足的情况 在进行Minor GC时，判断之前晋升平均" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://lei-zz.github.io/posts/jvm/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-02-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-02-12T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="JVM基础"/>
+<meta name="twitter:description" content="JVM基础 如何避免OutOfMemory hotspot 为了避免由新生代对象晋升道老年代，导致老年代空间不足的情况 在进行Minor GC时，判断之前晋升平均"/>
+<meta name="application-name" content="我的全新 Hugo 网站">
+<meta name="apple-mobile-web-app-title" content="我的全新 Hugo 网站"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://lei-zz.github.io/posts/jvm/" /><link rel="prev" href="http://lei-zz.github.io/posts/zookeeper/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "JVM基础",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/lei-zz.github.io\/posts\/jvm\/"
+        },"genre": "posts","keywords": "JVM","wordcount":  4762 ,
+        "url": "http:\/\/lei-zz.github.io\/posts\/jvm\/","datePublished": "2021-02-12T00:00:00+00:00","dateModified": "2021-02-12T00:00:00+00:00","publisher": {
+            "@type": "Organization",
+            "name": "lei.zz"},"author": {
+                "@type": "Person",
+                "name": "lei.zz"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="" header-mobile=""><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="我的全新 Hugo 网站">我的全新 Hugo 网站</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="我的全新 Hugo 网站">我的全新 Hugo 网站</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">JVM基础</h1><h2 class="single-subtitle">Jvm常见问题</h2><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>lei.zz</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-02-12">2021-02-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4762 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 10 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#如何避免outofmemory">如何避免OutOfMemory</a>
+      <ul>
+        <li><a href="#hotspot">hotspot</a></li>
+      </ul>
+    </li>
+    <li><a href="#java虚拟机是什么java为什么被称作是平台无关的编程语言">Java虚拟机是什么？Java为什么被称作是“平台无关的编程语言”？</a></li>
+    <li><a href="#对象分配规则">对象分配规则</a></li>
+    <li><a href="#jvm加载class原理机制">JVM加载class原理机制</a></li>
+    <li><a href="#java对象创建过程">Java对象创建过程</a></li>
+    <li><a href="#类的生命周期">类的生命周期</a></li>
+    <li><a href="#java对象结构">Java对象结构</a></li>
+    <li><a href="#jvm永久代会发生垃圾回收吗">JVM永久代会发生垃圾回收吗？</a></li>
+    <li><a href="#常用命令">常用命令</a></li>
+    <li><a href="#性能调优参数">性能调优参数</a></li>
+    <li><a href="#对象一定分配在堆上吗什么是逃逸分析">对象一定分配在堆上吗？什么是逃逸分析？</a></li>
+    <li><a href="#虚拟机为什么使用元空间替换了永久代"><strong>虚拟机为什么使用元空间替换了永久代？</strong></a>
+      <ul>
+        <li><a href="#什么是元空间什么是永久代为什么用元空间代替永久代"><strong>「什么是元空间？什么是永久代？为什么用元空间代替永久代？」</strong></a></li>
+        <li><a href="#什么是永久代它和方法区有什么关系呢"><strong>「什么是永久代？它和方法区有什么关系呢？」</strong></a></li>
+        <li><a href="#所以为什么使用元空间替换永久代"><strong>「所以，为什么使用元空间替换永久代？」</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#什么是stop-the-world-什么是oopmap什么是安全点">什么是Stop The World ?什么是OopMap？什么是安全点？</a>
+      <ul>
+        <li><a href="#stop-the-world">Stop The World</a></li>
+        <li><a href="#oopmap">OopMap</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="jvm基础">JVM基础</h1>
+<h2 id="如何避免outofmemory">如何避免OutOfMemory</h2>
+<h3 id="hotspot">hotspot</h3>
+<p>为了避免由新生代对象晋升道老年代，导致老年代空间不足的情况</p>
+<p>在进行Minor GC时，判断之前晋升平均大小，大于老年代剩余空间，直接触发Full GC</p>
+<p>例如：第一次触发MinorGc，有6MB对象晋升，再次MinorGC，老年代剩余空间小于6MB，则直接Full GC.</p>
+<p>新生代</p>
+<p>采用PSGC，在Minor GC，检查老年代剩余空间，小于6MB，触发对老年代回收。</p>
+<p>除此之外，使用RMI进行RPC管理Sun JDK，默认情况下会一小时执行一次Full GC</p>
+<p>可通过 java-Dsun.rmi.dgc.client.gcInterval=3600000设置间隔时间</p>
+<p>-XX:+DisableExplicitGC来禁止RMI调用System.gc</p>
+<h2 id="java虚拟机是什么java为什么被称作是平台无关的编程语言">Java虚拟机是什么？Java为什么被称作是“平台无关的编程语言”？</h2>
+<p>Java虚拟机是一个可以执行Java字节码的虚拟机进程。</p>
+<p>Java源文件被编译成能被Java虚拟机执行的字节码文件。</p>
+<p>Java被设计成允许应用程序可以运行在任意的平台，而不需要程序员为每一个平台单独重写或者是重新编译。</p>
+<p>Java虚拟机让这个变为可能，因为它知道底层硬件平台的指令长度和其他特</p>
+<p>性。</p>
+<h2 id="对象分配规则">对象分配规则</h2>
+<ul>
+<li>
+<p>对象优先分配在Eden区，没有足够空间，则执行一次Minor GC</p>
+</li>
+<li>
+<p>大对象直接进入老年代，（大对象指需要大量连续内存空间的对象），这样避免Eden区和俩个Survivor区之间发生大量的内存拷贝（新生代采用的复制算法进行内存回收）</p>
+</li>
+<li>
+<p>长期存活对象进入Surivivor区，经历两次Minor GC 就会进入老年代</p>
+</li>
+<li>
+<p>动态判断对象年龄，若Survivor中相同年龄的所有对象，大小综合大于Survivor空间一般，年龄大于或等于该年龄的对象可以直接进入老年代</p>
+</li>
+<li>
+<p>空间分配担保。Minor GC，JVM计算Survivor区晋升老年代的对象平均大小，大于老年代剩余空间大小，进行Full GC.</p>
+<p>小于时，HandlePromotionFailre = true ，只进行Monitor GC，false则进行Full GC。</p>
+</li>
+</ul>
+<h2 id="jvm加载class原理机制">JVM加载class原理机制</h2>
+<p>jvm中类的装在由类加载器classLoader和其子类实现</p>
+<p>类的加载过程：  加载、连接（验证、准备和解析）和初始化。</p>
+<ul>
+<li>
+<p>加载</p>
+<p>类的加载是指把类的.class文件中的数据读入到内存中，通常是创建一个字节数组读入.class文件，然后产生与所加载类对应的Class对象。</p>
+</li>
+<li>
+<p>连接</p>
+<p>加载完成后，Class对象还不完整，所以此时的类还不可用。当类被加载后就进入连接阶段，这一阶段包括验证、准备（为静态变量分配内存并设置默认的初始值）和解析（将符号引用替换为直接引用）三个步骤。</p>
+</li>
+<li>
+<p>初始化</p>
+<p>最后JVM对类进行初始化，包括：</p>
+<ul>
+<li>1)如果类存在直接的父类并且这个类还没有被初始化，那么就先初始化父类；</li>
+<li>2)如果类中存在初始化语句，就依次执行这些初始化语句。</li>
+</ul>
+</li>
+</ul>
+<p>类的加载是由类加载器完成的，类加载器包括：根加载器（BootStrap）、扩展加载器（Extension）、系统加载器（System）和用户自定义类加载器（java.lang.ClassLoader的子类）。</p>
+<p>Bootstrap：一般用本地代码实现，负责加载JVM基础核心类库（rt.jar）；</p>
+<p>Extension：从java.ext.dirs系统属性所指定的目录中加载类库，它的父加载器是Bootstrap；</p>
+<p>System：又叫应用类加载器，其父类是Extension。它是应用最广泛的类加载器。它从环境变量classpath或者系统属性java.class.path所指定的目录中记载类，是用户自定义加载器的默认父加载器。</p>
+<h2 id="java对象创建过程">Java对象创建过程</h2>
+<p>1.JVM遇到一条新建对象的指令时首先去检查这个指令的参数是否能在常量池中定义到一个类的符号引用。然后加载这个类</p>
+<p>2.为对象分配内存。一种办法“指针碰撞”、一种办法“空闲列表”，最终常用的办法“本地线程缓冲分配(TLAB)”</p>
+<p>3.将除对象头外的对象内存空间初始化为0</p>
+<p>4.对对象头进行必要设置</p>
+<h2 id="类的生命周期">类的生命周期</h2>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="..%5c..%5cassets%5cimg%5cjvm%5cclasslife.png"
+        data-srcset="..%5c..%5cassets%5cimg%5cjvm%5cclasslife.png, ..%5c..%5cassets%5cimg%5cjvm%5cclasslife.png 1.5x, ..%5c..%5cassets%5cimg%5cjvm%5cclasslife.png 2x"
+        data-sizes="auto"
+        alt="..\..\assets\img\jvm\classlife.png"
+        title="classlife" /></p>
+<ul>
+<li>加载，查找并加载类的二进制数据，在Java堆中也创建一个java.lang.Class类的对象</li>
+<li>连接，连接又包含三块内容：验证、准备、初始化。
+<ul>
+<li>1）验证，文件格式、元数据、字节码、符号引用验证；</li>
+<li>2）准备，为类的静态变量分配内存，并将其初始化为默认值；</li>
+<li>3）解析，把类中的符号引用转换为直接引用</li>
+</ul>
+</li>
+<li>初始化，为类的静态变量赋予正确的初始值</li>
+<li>使用，new出对象程序中使用</li>
+<li>卸载，执行垃圾回收</li>
+</ul>
+<h2 id="java对象结构">Java对象结构</h2>
+<p>Java对象由三个部分组成：对象头、实例数据、对齐填充。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="..%5c..%5cassets%5cimg%5cjvm%5cjavaObj.png"
+        data-srcset="..%5c..%5cassets%5cimg%5cjvm%5cjavaObj.png, ..%5c..%5cassets%5cimg%5cjvm%5cjavaObj.png 1.5x, ..%5c..%5cassets%5cimg%5cjvm%5cjavaObj.png 2x"
+        data-sizes="auto"
+        alt="..\..\assets\img\jvm\javaObj.png"
+        title="javaObj" /></p>
+<ul>
+<li>
+<p>对象头：</p>
+<ul>
+<li>第一部分存储对象自身的运行时数据：哈希码、GC分代年龄、锁标识状态、线程持有的锁、偏向线程ID（一般占32/64 bit）。</li>
+<li>第二部分是指针类型，指向对象的类元数据类型（即对象代表哪个类）。如果是数组对象，则对象头中还有一部分用来记录数组长度。</li>
+</ul>
+</li>
+<li>
+<p>实例数据：用来存储对象真正的有效信息（包括父类继承下来的和自己定义的）</p>
+</li>
+<li>
+<p>对齐填充：JVM要求对象起始地址必须是8字节的整数倍（8字节对齐）</p>
+</li>
+</ul>
+<h2 id="jvm永久代会发生垃圾回收吗">JVM永久代会发生垃圾回收吗？</h2>
+<p>有垃圾回收，只是条件难以达到，主要回收：<strong>常量池中废弃的常量和不在使用的类型(类)</strong></p>
+<p>但是判断一个类型是否属于“不在被使用的类”的条件就非常苛刻了。需要同时满足以下三个条件：</p>
+<pre><code> 1、该类的所有实例都已经被回收，也就是堆中不存在该类及其任何派生子类的实例。
+
+ 2、加载该类的类加载器已经被回收，这个条件通常是很难达到的。
+
+ 3、该类对应的java.lang.Class对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。
+</code></pre>
+<h2 id="常用命令">常用命令</h2>
+<ul>
+<li>jps，JVM Process Status Tool,显示指定系统内所有的HotSpot虚拟机进程。</li>
+<li>jstat，JVM statistics Monitoring是用于监视虚拟机运行时状态信息的命令，它可以显示出虚拟</li>
+<li>机进程中的类装载、内存、垃圾收集、JIT编译等运行数据。</li>
+<li>jmap，JVM Memory Map命令用于生成heap dump文件</li>
+<li>jhat，JVM Heap Analysis Tool命令是与jmap搭配使用，用来分析jmap生成的dump，jhat内</li>
+<li>置了一个微型的HTTP/HTML服务器，生成dump的分析结果后，可以在浏览器中查看</li>
+<li>jstack，用于生成java虚拟机当前时刻的线程快照。</li>
+<li>jinfo，JVM Confifiguration info 这个命令作用是实时查看和调整虚拟机运行参数。</li>
+</ul>
+<h2 id="性能调优参数">性能调优参数</h2>
+<ul>
+<li>
+<p>设定堆内存大小</p>
+<p>-Xmx：堆内存最大限制。</p>
+</li>
+<li>
+<p>设定新生代大小。 新生代不宜太小，否则会有大量对象涌入老年代</p>
+<p>-XX:NewSize：新生代大小</p>
+<p>-XX:NewRatio 新生代和老生代占比</p>
+<p>-XX:SurvivorRatio：伊甸园空间和幸存者空间的占比</p>
+</li>
+<li>
+<p>设定垃圾回收器</p>
+<ul>
+<li>年轻代用 -XX:+UseParNewGC</li>
+<li>年老代用-XX:+UseConcMarkSweepGC</li>
+</ul>
+</li>
+</ul>
+<h2 id="对象一定分配在堆上吗什么是逃逸分析">对象一定分配在堆上吗？什么是逃逸分析？</h2>
+<p><strong>「对象一定分配在堆中吗？」</strong> 不一定的，JVM通过**「逃逸分析」<strong>，那些</strong>逃不出方法的对象会在栈上分配。**</p>
+<p><strong>「什么是逃逸分析？」</strong></p>
+<p>逃逸分析(Escape Analysis)，是一种可以有效减少Java 程序中同步负载和内存堆分配压力的跨函数全局数据流分析算法。</p>
+<p>通过逃逸分析，Java Hotspot编译器能够分析出一个新的对象的引用的使用范围，从而决定是否要将这个对象分配到堆上。</p>
+<p><strong>逃逸分析</strong>是指分析指针动态范围的方法，它同编译器优化原理的指针分析和外形分析相关联。当变量（或者对象）在方法中分配后，其指针有可能被返回或者被全局引用，这样就会被其他方法或者线程所引用，这种现象称作指针（或者引用）的逃逸(Escape)。</p>
+<p><strong>通俗点讲，如果一个对象的指针被多个方法或者线程引用时，那么我们就称这个对象的指针发生了逃逸</strong>。</p>
+<p><strong>「逃逸分析的好处」</strong></p>
+<ul>
+<li>
+<p>栈上分配，可以降低垃圾收集器运行的频率。</p>
+</li>
+<li>
+<p>同步消除，如果发现某个对象只能从一个线程可访问，那么在这个对象上的操作可以不需要同步。</p>
+</li>
+<li>
+<p>标量替换，把对象分解成一个个基本类型，并且内存分配不再是分配在堆上，而是分配在栈上。这样的好处有，</p>
+<ul>
+<li>一、减少内存使用，因为不用生成对象头。</li>
+<li>二、程序内存回收效率高，并且GC频率也会减少。</li>
+</ul>
+</li>
+</ul>
+<h2 id="虚拟机为什么使用元空间替换了永久代"><strong>虚拟机为什么使用元空间替换了永久代？</strong></h2>
+<h3 id="什么是元空间什么是永久代为什么用元空间代替永久代"><strong>「什么是元空间？什么是永久代？为什么用元空间代替永久代？」</strong></h3>
+<p>我们先回顾一下**「方法区」**吧,看</p>
+<p>看虚拟机运行时数据内存图，如下:</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="..%5c..%5cassets%5cimg%5cjvm%5cmethodSpace.png"
+        data-srcset="..%5c..%5cassets%5cimg%5cjvm%5cmethodSpace.png, ..%5c..%5cassets%5cimg%5cjvm%5cmethodSpace.png 1.5x, ..%5c..%5cassets%5cimg%5cjvm%5cmethodSpace.png 2x"
+        data-sizes="auto"
+        alt="..\..\assets\img\jvm\methodSpace.png"
+        title="image-20220212011841528" /></p>
+<p>方法区和堆一样，是各个线程共享的内存区域，它用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译后的代码等数据。</p>
+<h3 id="什么是永久代它和方法区有什么关系呢"><strong>「什么是永久代？它和方法区有什么关系呢？」</strong></h3>
+<p>如果在HotSpot虚拟机上开发、部署，很多程序员都把方法区称作永久代。可以说方法区是规范，<strong>永久代是Hotspot针对该规范进行的实现</strong>。在Java7及以前的版本，<strong>方法区都是永久代实现的</strong>。</p>
+<h4 id="什么是元空间它和方法区有什么关系呢"><strong>「什么是元空间？它和方法区有什么关系呢？」</strong></h4>
+<p>对于Java8，HotSpots取消了永久代，取而代之的是元空间(Metaspace)。换句话说，就是<strong>方法区还是在的，只是实现变了，从永久代变为元空间了</strong>。</p>
+<h4 id="为什么使用元空间替换了永久代"><strong>「为什么使用元空间替换了永久代？」</strong></h4>
+<p>永久代的方法区，和堆使用的物理内存是连续的。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="..%5c..%5cassets%5cimg%5cjvm%5cPGen.png"
+        data-srcset="..%5c..%5cassets%5cimg%5cjvm%5cPGen.png, ..%5c..%5cassets%5cimg%5cjvm%5cPGen.png 1.5x, ..%5c..%5cassets%5cimg%5cjvm%5cPGen.png 2x"
+        data-sizes="auto"
+        alt="..\..\assets\img\jvm\PGen.png"
+        title="image-20220212011702489" /></p>
+<p>**「永久代」**是通过以下这两个参数配置大小的~</p>
+<ul>
+<li>
+<p>-XX:PremSize：设置永久代的初始大小</p>
+</li>
+<li>
+<p>-XX:MaxPermSize: 设置永久代的最大值，默认是64M</p>
+</li>
+</ul>
+<p>对于**「永久代」<strong>，如果动态生成很多class的话，就很可能出现</strong>「java.lang.OutOfMemoryError:PermGen space 错误」**，因为永久代空间配置有限嘛。最典型的场景是，在web开发比较多jsp页面的时候。</p>
+<p>JDK8之后，方法区存在于元空间(Metaspace)。物理内存不再与堆连续，而是<strong>直接存在于本地内存中</strong>，理论上机器**「内存有多大，元空间就有多大」**。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="..%5c..%5cassets%5cimg%5cjvm%5cjvmSpaceModel.png"
+        data-srcset="..%5c..%5cassets%5cimg%5cjvm%5cjvmSpaceModel.png, ..%5c..%5cassets%5cimg%5cjvm%5cjvmSpaceModel.png 1.5x, ..%5c..%5cassets%5cimg%5cjvm%5cjvmSpaceModel.png 2x"
+        data-sizes="auto"
+        alt="..\..\assets\img\jvm\jvmSpaceModel.png"
+        title="image-20220212012153106" /></p>
+<p>可以通过以下的参数来设置元空间的大小：</p>
+<pre tabindex="0"><code>-XX:MetaspaceSize，初始空间大小，达到该值就会触发垃圾收集进行类型卸载，同时GC会对该值进行调整：如果释放了大量的空间，就适当降低该值；如果释放了很少的空间，那么在不超过MaxMetaspaceSize时，适当提高该值。
+
+-XX:MaxMetaspaceSize，最大空间，默认是没有限制的。
+
+-XX:MinMetaspaceFreeRatio，在GC之后，最小的Metaspace剩余空间容量的百分比，减少为分配空间所导致的垃圾收集
+
+-XX:MaxMetaspaceFreeRatio，在GC之后，最大的Metaspace剩余空间容量的百分比，减少为释放空间所导致的垃圾收集
+</code></pre><h3 id="所以为什么使用元空间替换永久代"><strong>「所以，为什么使用元空间替换永久代？」</strong></h3>
+<p>表面上看是为了避免OOM异常。因为通常使用PermSize和MaxPermSize设置永久代的大小就</p>
+<p>决定了永久代的上限，但是不是总能知道应该设置为多大合适, 如果使用默认值很容易遇到OOM错误。</p>
+<p><strong>当使用元空间时，可以加载多少类的元数据就不再由MaxPermSize控制, 而由系统的实际可用空间来控制啦</strong>。</p>
+<h2 id="什么是stop-the-world-什么是oopmap什么是安全点">什么是Stop The World ?什么是OopMap？什么是安全点？</h2>
+<h3 id="stop-the-world">Stop The World</h3>
+<p>进行垃圾回收的过程中，会涉及对象的移动。为了保证对象引用更新的正确性，必须暂停所有的用户线程，像这样的停顿，虚拟机设计者形象描述为**「top The World」**。也简称为STW。</p>
+<h3 id="oopmap">OopMap</h3>
+<p>在HotSpot中，有个数据结构（映射表）称为**「OopMap」**。一旦类加载动作完成的时候，HotSpot就会把对象内什么偏移量上是什么类型的数据计算出来，记录到OopMap。</p>
+<p>在即时编译过程中，也会在**「特定的位置」**生成 OopMap，记录下栈上和寄存器里哪些位置是引用。</p>
+<p>这些特定的位置主要在：</p>
+<ol>
+<li>循环的末尾（非 counted 循环）</li>
+<li>方法临返回前 / 调用方法的call指令后</li>
+<li>可能抛异常的位置</li>
+</ol>
+<p>这些位置就叫作**「安全点(safepoint)。」** 用户程序执行时并非在代码指令流的任意位置都能够在停顿下来开始垃圾收集，而是<strong>必须是执行到安全点才能够暂停</strong>。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2021-02-12</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/jvm/">JVM</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/zookeeper/" class="prev" rel="prev" title="ZooKeeper基本理解"><i class="fas fa-angle-left fa-fw"></i>ZooKeeper基本理解</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

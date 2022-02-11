@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>JVM - 标签 - 我的全新 Hugo 网站</title>
+        <link>http://lei-zz.github.io/tags/jvm/</link>
+        <description>JVM - 标签 - 我的全新 Hugo 网站</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 12 Feb 2021 00:00:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/tags/jvm/" rel="self" type="application/rss+xml" /><item>
+    <title>JVM基础</title>
+    <link>http://lei-zz.github.io/posts/jvm/</link>
+    <pubDate>Fri, 12 Feb 2021 00:00:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>http://lei-zz.github.io/posts/jvm/</guid>
+    <description><![CDATA[JVM基础 如何避免OutOfMemory hotspot 为了避免由新生代对象晋升道老年代，导致老年代空间不足的情况 在进行Minor GC时，判断之前晋升平均]]></description>
+</item></channel>
+</rss>
