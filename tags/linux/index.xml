@@ -1,14 +1,22 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Linux - 标签 - 我的全新 Hugo 网站</title>
+        <title>Linux - Tag - Z</title>
         <link>http://lei-zz.github.io/tags/linux/</link>
-        <description>Linux - 标签 - 我的全新 Hugo 网站</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 12 Jul 2020 00:00:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/tags/linux/" rel="self" type="application/rss+xml" /><item>
+        <description>Linux - Tag - Z</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>lei.zz0309@gmail.com (lei.zz)</managingEditor>
+            <webMaster>lei.zz0309@gmail.com (lei.zz)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 12 Jul 2020 00:00:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/tags/linux/" rel="self" type="application/rss+xml" /><item>
     <title>Linux常用命令</title>
-    <link>http://lei-zz.github.io/posts/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</link>
+    <link>http://lei-zz.github.io/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</link>
     <pubDate>Sun, 12 Jul 2020 00:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
-    <description><![CDATA[Linux常用命令 1、ls命令 就是 list 的缩写，通过 ls 命令不仅可以查看 linux 文件夹包含的文件，而且可以查看文件权限(包括目录、文件夹、文件权限)查]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
+    <description><![CDATA[Linux常用命令 1、ls命令 就是 list 的缩写，通过 ls 命令不仅可以查看 linux 文件夹包含的文件，而且可以查看文件权限(包括目录、文件夹、文件权限)查看目录信息等等。
+常用参数搭配：
+1 2 3 4 5 6 7  ls -a 列出目录所有文件，包含以.开始的隐藏文件 ls -A 列出除.及..的其它文件 ls -r 反序排列 ls -t 以文件修改时间排序 ls -S 以文件大小排序 ls -h 以易读大小显示 ls -l 除了文件名之外，还将文件的权限、所有者、文件大小等信息详细列出来   实例：
+(1) 按易读方式按时间反序排序，并显示文件详细信息
+1  ls -lhrt   (2) 按大小反序显示文件详细信息
+1  ls -lrS   (3)列出当前目录中所有以&quot;t&quot;开头的目录的详细内容
+1  ls -l t*   (4) 列出文件绝对路径（不包含隐藏文件）
+1  ls|sed&#34;s:^:`pwd`/:&#34;  (5) 列出文件绝对路径（包含隐藏文件）]]></description>
 </item></channel>
 </rss>

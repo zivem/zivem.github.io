@@ -1,14 +1,31 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>ZooKeeper - 标签 - 我的全新 Hugo 网站</title>
+        <title>ZooKeeper - Tag - Z</title>
         <link>http://lei-zz.github.io/tags/zookeeper/</link>
-        <description>ZooKeeper - 标签 - 我的全新 Hugo 网站</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 28 Jul 2020 00:00:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/tags/zookeeper/" rel="self" type="application/rss+xml" /><item>
+        <description>ZooKeeper - Tag - Z</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>lei.zz0309@gmail.com (lei.zz)</managingEditor>
+            <webMaster>lei.zz0309@gmail.com (lei.zz)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 28 Jul 2020 00:00:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/tags/zookeeper/" rel="self" type="application/rss+xml" /><item>
     <title>ZooKeeper基本理解</title>
-    <link>http://lei-zz.github.io/posts/zookeeper/</link>
+    <link>http://lei-zz.github.io/zookeeper/</link>
     <pubDate>Tue, 28 Jul 2020 00:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/zookeeper/</guid>
-    <description><![CDATA[Zookeeper 简介 使用场景 ZooKeeper最主要的使用场景是分布式系统的分布式协同服务。 分布式系统服务进程通信方式 通过网络进行信息共享 通过共享存储 Zo]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/zookeeper/</guid>
+    <description><![CDATA[Zookeeper 简介 使用场景 ZooKeeper最主要的使用场景是分布式系统的分布式协同服务。
+分布式系统服务进程通信方式  通过网络进行信息共享 通过共享存储  ZooKeeoer对分布式系统的协调，使用的是第二种方式，共享存储。
+基本概念 ZooKeeper是一个开源的分布式协调服务，设计目标是将哪些复杂的且容易出错的分布式一致性服务封装起来，构成一个高效可靠的原语集，并以一些简单的接口提供给用户使用。
+ZooKeeper是一个典型的分布式数据一致性的解决方案。
+基于它实现数据订阅/发布、负载均衡、命名服务、集群管理、分布式锁喝分布式队列等功能。
+集群 分布式系统：Master/Slave模式，主备模式
+ZooKeeper：
+  Leader:通过选举选定，为客户端提供读和写服务 Follower：读服务 Observer：读服务，不参与选举   会话 ZooKeeper默认端口2181.
+客户端启动的时候，首先会与服务器建立一个TCP连接，从第一次建立开始，客户端生命周期开始，客户端能够心跳检测与服务器保持有效的会话，也能向Zookeeper服务器发送请求并接受响应，同时还能够通过该连接接受来自服务器的Watch事件通知。
+数据节点Znode  构成集群的机器，机器节点； 数据模型中的数据单元，数据节点-Znode。ZooKeeper所有数据存储在内存中，数据模型是一棵树，通过斜杆进行分割路径。  版本 对于每个Znode，ZooKeeper都会为其维护一个叫做Stat的数据结构，记录了Znode的三个数据版本
+ version当前版本 cversion当前znode子节点的版本 aversion当前znode的ACL版本，access control list 权限控制  Watcher事件监听器 Watcher，重要特性。zookeeper允许再指定节点注册watcher，并在一些特定事件触发
+ACL Zookeeper􏳔􏰉采用ACL􏴦Access ControlLists􏴧􏵣􏵤􏱆􏲴􏰪􏵥􏱁􏵦􏵠􏰌􏲢􏰜􏰝􏲧􏱭􏰳􏵧􏲾􏵥􏱁􏰞策略进行权限控制，以下五种权限：
+ CREATE􏰞􏵨􏴍􏵓􏳴􏱎􏰇􏵥􏱁􏰘:创建子节点的权限 READ􏰞􏵩􏵪􏳴􏱎􏴤􏴥􏳵􏵓􏳴􏱎􏱲􏵫􏰇􏵥􏱁􏰘:获取节点数据和子节点列表的权限 WRITE􏰞􏵬􏵭􏳴􏱎􏴤􏴥􏰇􏵥􏱁:更新节点数据权限 DELETE􏰞􏵮􏵯􏵓􏳴􏱎􏰇􏵥􏱁􏰘:删除子节点权限 ADMIN􏰞􏱧􏵰:设置节点􏳴􏱎ACL􏰇􏵥􏱁􏰘权限  􏲢􏱱􏳜􏰆􏵛􏵱􏰇􏰍􏰌CREATE􏳵和Delete权限都是针对子节点的权限控制􏱁􏳍􏰍􏵲􏲌􏵓􏳴􏱎􏰇􏵥􏱁􏵦􏵠
+基本使用 ZNode类型  持久性节点 临时性节点 顺序性节点  通过组合可以生成四种节点类型：
+  持久节点
+节点创建后会一直存在服务器，直到删除操作主动清除
+  持久顺序节点]]></description>
 </item></channel>
 </rss>

@@ -1,14 +1,40 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>分布式事务 - 标签 - 我的全新 Hugo 网站</title>
+        <title>分布式事务 - Tag - Z</title>
         <link>http://lei-zz.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/</link>
-        <description>分布式事务 - 标签 - 我的全新 Hugo 网站</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Wed, 22 Jul 2020 14:40:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="self" type="application/rss+xml" /><item>
+        <description>分布式事务 - Tag - Z</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>lei.zz0309@gmail.com (lei.zz)</managingEditor>
+            <webMaster>lei.zz0309@gmail.com (lei.zz)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Wed, 22 Jul 2020 14:40:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="self" type="application/rss+xml" /><item>
     <title>分布式理论</title>
-    <link>http://lei-zz.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F/</link>
+    <link>http://lei-zz.github.io/%E5%88%86%E5%B8%83%E5%BC%8F/</link>
     <pubDate>Wed, 22 Jul 2020 14:40:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F/</guid>
-    <description><![CDATA[分布式 1.分布式系统架构 1.1概念 分布式系统是一个硬件或软件组件分布在不同的网络计算机上，彼此之间仅仅通过消息传递进行通信和协调 的系统。 俗的]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/%E5%88%86%E5%B8%83%E5%BC%8F/</guid>
+    <description><![CDATA[分布式 1.分布式系统架构 1.1概念 分布式系统是一个硬件或软件组件分布在不同的网络计算机上，彼此之间仅仅通过消息传递进行通信和协调 的系统。
+俗的理解，所谓分布式系统，就是一个业务拆分成多个子业务，分布在不同的服务器节点，共同构成的系统称为分 布式系统，同一个分布式系统中的服务器节点在空间部署上是可以随意分布的，这些服务器可能放在不同的机柜 中，也可能在不同的机房中，甚至分布在不同的城市。
+分布式与集群的区别:
+集群:多个人在一起作同样的事 。
+分布式 :多个人在一起作不同的事 。
+分布式系统的特点:
+(1)分布性
+(2)对等性
+(3)并发性
+(4)缺乏全局时钟
+(5)故障总是会发生
+1.2.分布式系统面临的问题 1)通信异常 网络本身的不可靠性，因此每次网络通信都会伴随着网络不可用的风险(光纤、路由、DNS等硬件设备或系统的不 可用)，都会导致最终分布式系统无法顺利进行一次网络通信，另外，即使分布式系统各节点之间的网络通信能够 正常执行，其延时也会大于单机操作，存在巨大的延时差别，也会影响消息的收发过程，因此消息丢失和消息延迟 变的非常普遍。
+2)网络分区 网络之间出现了网络不连通，但各个子网络的内部网络是正常的，从而导致整个系统的网络环境被切分成了若干个 孤立的区域，分布式系统就会出现局部小集群，在极端情况下，这些小集群会独立完成原本需要整个分布式系统才 能完成的功能，包括数据的事务处理，这就对分布式一致性提出非常大的挑战。
+3)节点故障 节点故障是分布式系统下另一个比较常见的问题，指的是组成分布式系统的服务器节点出现的宕机或&quot;僵死&quot;现象，
+根据经验来说，每个节点都有可能出现故障，并且经常发生.
+4)三态 分布式系统每一次请求与响应存在特有的“三态”概念，即成功、失败和超时。
+分布式系统中，由于网络是不可靠的，虽然绝大部分情况下，网络通信能够接收到成功或失败的响应，但当网络出 现异常的情况下，就会出现超时现象，通常有以下两种情况:
+  由于网络原因，该请求并没有被成功的发送到接收方，而是在发送过程就发生了丢失现象。
+  该请求成功的被接收方接收后，并进行了处理，但在响应反馈给发送方过程中，发生了消息丢失现象。
+  1.3.分布式理论:一致性 1)什么是分布式一致性 分布式数据一致性，指的是数据在多份副本中存储时，各副本中的数据是一致的。
+2)副本一致性 分布式系统当中，数据往往会有多个副本。如果是一台数据库处理所有的数据请求，那么通过ACID四原则，基本 可以保证数据的一致性。而多个副本就需要保证数据会有多份拷贝。这就带来了同步的问题，因为我们几乎没有办 法保证可以同时更新所有机器当中的包括备份所有数据。 网络延迟，即使我在同一时间给所有机器发送了更新数据 的请求，也不能保证这些请求被响应的时间保持一致存在时间差，就会存在某些机器之间的数据不一致的情况。
+3)一致性分类 强一致性 这种一致性级别是最符合用户直觉的，它要求系统写入什么，读出来的也会是什么，用户体验好，但实现起来往往 对系统的性能影响大。但是强一致性很难实现。
+弱一致性 这种一致性级别约束了系统在写入成功后，不承诺立即可以读到写入的值，也不承诺多久之后数据能够达到一致，
+但会尽可能地保证到某个时间级别(比如秒级别)后，数据能够达到一致状态。
+最终一致性 最终一致性是所有分布式一致性模型当中最弱的。可以认为是没有任何优化的“最”弱一致性，它的意思是说，我不考虑 所有的中间状态的影响，只保证当没有新的更新之后，经过一段时间之后，最终系统内所有副本的数据是正确的。 它最大程度上保证了系统的并发能力，也因此，在高并发的场景下，它也是使用最广的一致性模型。
+1.4.分布式理论:CAP定理 CAP定理 CAP 理论含义是，一个分布式系统不可能同时满足一致性(C:Consistency)，可用性(A: Availability)和分区容错 性(P:Partition tolerance)这三个基本需求，最多只能同时满足其中的2个。]]></description>
 </item></channel>
 </rss>

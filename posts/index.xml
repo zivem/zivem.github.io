@@ -1,77 +1,212 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>所有文章 - 我的全新 Hugo 网站</title>
+        <title>All Posts - Z</title>
         <link>http://lei-zz.github.io/posts/</link>
-        <description>所有文章 | 我的全新 Hugo 网站</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 12 Feb 2021 00:00:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+        <description>All Posts | Z</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>lei.zz0309@gmail.com (lei.zz)</managingEditor>
+            <webMaster>lei.zz0309@gmail.com (lei.zz)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 12 Feb 2021 00:00:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/posts/" rel="self" type="application/rss+xml" /><item>
     <title>JVM基础</title>
-    <link>http://lei-zz.github.io/posts/jvm/</link>
+    <link>http://lei-zz.github.io/jvm/</link>
     <pubDate>Fri, 12 Feb 2021 00:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/jvm/</guid>
-    <description><![CDATA[JVM基础 如何避免OutOfMemory hotspot 为了避免由新生代对象晋升道老年代，导致老年代空间不足的情况 在进行Minor GC时，判断之前晋升平均]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/jvm/</guid>
+    <description><![CDATA[JVM基础 如何避免OutOfMemory hotspot 为了避免由新生代对象晋升道老年代，导致老年代空间不足的情况
+在进行Minor GC时，判断之前晋升平均大小，大于老年代剩余空间，直接触发Full GC
+例如：第一次触发MinorGc，有6MB对象晋升，再次MinorGC，老年代剩余空间小于6MB，则直接Full GC.
+新生代
+采用PSGC，在Minor GC，检查老年代剩余空间，小于6MB，触发对老年代回收。
+除此之外，使用RMI进行RPC管理Sun JDK，默认情况下会一小时执行一次Full GC
+可通过 java-Dsun.rmi.dgc.client.gcInterval=3600000设置间隔时间
+-XX:+DisableExplicitGC来禁止RMI调用System.gc
+Java虚拟机是什么？Java为什么被称作是“平台无关的编程语言”？ Java虚拟机是一个可以执行Java字节码的虚拟机进程。
+Java源文件被编译成能被Java虚拟机执行的字节码文件。
+Java被设计成允许应用程序可以运行在任意的平台，而不需要程序员为每一个平台单独重写或者是重新编译。
+Java虚拟机让这个变为可能，因为它知道底层硬件平台的指令长度和其他特
+性。
+对象分配规则   对象优先分配在Eden区，没有足够空间，则执行一次Minor GC
+  大对象直接进入老年代，（大对象指需要大量连续内存空间的对象），这样避免Eden区和俩个Survivor区之间发生大量的内存拷贝（新生代采用的复制算法进行内存回收）
+  长期存活对象进入Surivivor区，经历两次Minor GC 就会进入老年代
+  动态判断对象年龄，若Survivor中相同年龄的所有对象，大小综合大于Survivor空间一般，年龄大于或等于该年龄的对象可以直接进入老年代
+  空间分配担保。Minor GC，JVM计算Survivor区晋升老年代的对象平均大小，大于老年代剩余空间大小，进行Full GC.
+小于时，HandlePromotionFailre = true ，只进行Monitor GC，false则进行Full GC。
+  JVM加载class原理机制 jvm中类的装在由类加载器classLoader和其子类实现
+类的加载过程： 加载、连接（验证、准备和解析）和初始化。
+  加载
+类的加载是指把类的.class文件中的数据读入到内存中，通常是创建一个字节数组读入.class文件，然后产生与所加载类对应的Class对象。
+  连接
+加载完成后，Class对象还不完整，所以此时的类还不可用。当类被加载后就进入连接阶段，这一阶段包括验证、准备（为静态变量分配内存并设置默认的初始值）和解析（将符号引用替换为直接引用）三个步骤。
+  初始化
+最后JVM对类进行初始化，包括：
+ 1)如果类存在直接的父类并且这个类还没有被初始化，那么就先初始化父类； 2)如果类中存在初始化语句，就依次执行这些初始化语句。    类的加载是由类加载器完成的，类加载器包括：根加载器（BootStrap）、扩展加载器（Extension）、系统加载器（System）和用户自定义类加载器（java.]]></description>
 </item><item>
     <title>ZooKeeper基本理解</title>
-    <link>http://lei-zz.github.io/posts/zookeeper/</link>
+    <link>http://lei-zz.github.io/zookeeper/</link>
     <pubDate>Tue, 28 Jul 2020 00:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/zookeeper/</guid>
-    <description><![CDATA[Zookeeper 简介 使用场景 ZooKeeper最主要的使用场景是分布式系统的分布式协同服务。 分布式系统服务进程通信方式 通过网络进行信息共享 通过共享存储 Zo]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/zookeeper/</guid>
+    <description><![CDATA[Zookeeper 简介 使用场景 ZooKeeper最主要的使用场景是分布式系统的分布式协同服务。
+分布式系统服务进程通信方式  通过网络进行信息共享 通过共享存储  ZooKeeoer对分布式系统的协调，使用的是第二种方式，共享存储。
+基本概念 ZooKeeper是一个开源的分布式协调服务，设计目标是将哪些复杂的且容易出错的分布式一致性服务封装起来，构成一个高效可靠的原语集，并以一些简单的接口提供给用户使用。
+ZooKeeper是一个典型的分布式数据一致性的解决方案。
+基于它实现数据订阅/发布、负载均衡、命名服务、集群管理、分布式锁喝分布式队列等功能。
+集群 分布式系统：Master/Slave模式，主备模式
+ZooKeeper：
+  Leader:通过选举选定，为客户端提供读和写服务 Follower：读服务 Observer：读服务，不参与选举   会话 ZooKeeper默认端口2181.
+客户端启动的时候，首先会与服务器建立一个TCP连接，从第一次建立开始，客户端生命周期开始，客户端能够心跳检测与服务器保持有效的会话，也能向Zookeeper服务器发送请求并接受响应，同时还能够通过该连接接受来自服务器的Watch事件通知。
+数据节点Znode  构成集群的机器，机器节点； 数据模型中的数据单元，数据节点-Znode。ZooKeeper所有数据存储在内存中，数据模型是一棵树，通过斜杆进行分割路径。  版本 对于每个Znode，ZooKeeper都会为其维护一个叫做Stat的数据结构，记录了Znode的三个数据版本
+ version当前版本 cversion当前znode子节点的版本 aversion当前znode的ACL版本，access control list 权限控制  Watcher事件监听器 Watcher，重要特性。zookeeper允许再指定节点注册watcher，并在一些特定事件触发
+ACL Zookeeper􏳔􏰉采用ACL􏴦Access ControlLists􏴧􏵣􏵤􏱆􏲴􏰪􏵥􏱁􏵦􏵠􏰌􏲢􏰜􏰝􏲧􏱭􏰳􏵧􏲾􏵥􏱁􏰞策略进行权限控制，以下五种权限：
+ CREATE􏰞􏵨􏴍􏵓􏳴􏱎􏰇􏵥􏱁􏰘:创建子节点的权限 READ􏰞􏵩􏵪􏳴􏱎􏴤􏴥􏳵􏵓􏳴􏱎􏱲􏵫􏰇􏵥􏱁􏰘:获取节点数据和子节点列表的权限 WRITE􏰞􏵬􏵭􏳴􏱎􏴤􏴥􏰇􏵥􏱁:更新节点数据权限 DELETE􏰞􏵮􏵯􏵓􏳴􏱎􏰇􏵥􏱁􏰘:删除子节点权限 ADMIN􏰞􏱧􏵰:设置节点􏳴􏱎ACL􏰇􏵥􏱁􏰘权限  􏲢􏱱􏳜􏰆􏵛􏵱􏰇􏰍􏰌CREATE􏳵和Delete权限都是针对子节点的权限控制􏱁􏳍􏰍􏵲􏲌􏵓􏳴􏱎􏰇􏵥􏱁􏵦􏵠
+基本使用 ZNode类型  持久性节点 临时性节点 顺序性节点  通过组合可以生成四种节点类型：
+  持久节点
+节点创建后会一直存在服务器，直到删除操作主动清除
+  持久顺序节点]]></description>
 </item><item>
     <title>领域驱动模型DDD</title>
-    <link>http://lei-zz.github.io/posts/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E6%A8%A1%E5%9E%8Bddd/</link>
+    <link>http://lei-zz.github.io/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E6%A8%A1%E5%9E%8Bddd/</link>
     <pubDate>Thu, 23 Jul 2020 10:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E6%A8%A1%E5%9E%8Bddd/</guid>
-    <description><![CDATA[领域驱动模型DDD 定义 在开发前，通常需要进行大量的业务知识梳理，而后到达软件设计的层面，最后才是开发。而在业务知识梳理的过程中，我们必然会形]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E6%A8%A1%E5%9E%8Bddd/</guid>
+    <description><![CDATA[领域驱动模型DDD 定义 在开发前，通常需要进行大量的业务知识梳理，而后到达软件设计的层面，最后才是开发。而在业务知识梳理的过程中，我们必然会形成某个领域知识，根据领域知识来一步步驱动软件设计，就是领域驱动设计的基本概念。而领域驱动设计的核心就在于建立正确的领域驱动模型。
+设计思想 业务逻辑不再集中在几个大型的类上，而是由大量相对小的领域对象(类)组成，这些类具备自己的状态和行为，每个类是相对完整的独立体，并与现实领域的业务对象映射。领域模型就是由这样许多的细粒度的类组成。
+设计阶段  1、以一种领域专家、设计人员、开发人员都能理解的通用语言作为相互交流的工具，在交流的过程中发现领域概念，然后将这些概念设计成一个领域模型； 2、由领域模型驱动软件设计，用代码来实现该领域模型；  传统模型   对象是数据的载体，只有简单的getter/setter方法，没有行为。
+  以数据为中心，以数据库ER设计作驱动
+  贫血模式
+ 业务逻辑都是写在Service中的，WmActPoi充其量只是个数据载体，没有任何行为，是一种贫血模型 业务逻辑复杂了，业务逻辑、状态会散落到在大量方法中，原本的代码意图会渐渐不明确，我们将这种情况称为由贫血症引起的失忆症    特点
+ a. 以数据库为中心 b. 贫血模型 c. 业务逻辑散落在大量的方法中 d. 当系统越来越复杂时，开发时间指数增长，维护成本很高    常见模型   DO(Data Object):此对象与数据库表结构一一对应，通过 DAO 层向上传输数据源对象。  DTO(Data Transfer Object):数据传输对象，Service 或 Manager 向外传输的对象。  BO(Business Object):业务对象，由 Service 层输出的封装业务逻辑的对象。  AO(ApplicationObject):应用对象，在Web层与Service层之间抽象的复用对象模型， 极为贴近展示层，复用度不高。  VO(View Object):显示层对象，通常是 Web 向模板渲染引擎层传输的对象。  Query:数据查询对象，各层接收上层的查询请求。注意超过 2 个参数的查询封装，禁止使用 Map 类来传输。  POJO：简单无规则java对象 纯的传统意义的java对象，最基本的Java Bean只有属性加上属性的get和set方法可以额转化为PO、DTO、VO；比如POJO在传输过程中就是DTO  PO：持久层对象 是ORM(Objevt Relational Mapping)框架中Entity，PO属性和数据库中表的字段形成一一对应关系 VO和PO，都是属性加上属性的get和set方法；表面看没什么不同，但代表的含义是完全不同的  架构解决方案 用户界面、表现层 负责向用户战羡信息以及解释用户命令]]></description>
 </item><item>
     <title>分布式网络通信</title>
-    <link>http://lei-zz.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/</link>
+    <link>http://lei-zz.github.io/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/</link>
     <pubDate>Wed, 22 Jul 2020 16:10:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/</guid>
-    <description><![CDATA[分布式架构网络通信 1.基本原理 要实现网络机器间的通讯，首先得来看看计算机系统网络通信的基本原理，在底层层面去看，网络通信需要做的就 是将流从一]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/</guid>
+    <description><![CDATA[分布式架构网络通信 1.基本原理 要实现网络机器间的通讯，首先得来看看计算机系统网络通信的基本原理，在底层层面去看，网络通信需要做的就 是将流从一台计算机传输到另外一台计算机，基于传输协议和网络IO来实现，其中传输协议比较出名的有tcp、 udp等等，tcp、udp都是在基于Socket概念上为某类应用场景而扩展出的传输协议，网络IO，主要有bio、nio、 aio三种方式，所有的分布式应用通讯都基于这个原理而实现，只是为了应用的易用，各种语言通常都会提供一些 更为贴近应用易用的应用层协议。
+2.什么是RPC RPC全称为remote procedure call，即远程过程调用。
+借助RPC可以做到像本地调用一样调用远程服务，是一种进程间的通信方式
+比如两台服务器A和B，A服务器上部署一个应用，B服务器上部署一个应用，A服务器上的应用想调用B服务器上的 应用提供的方法，由于两个应用不在一个内存空间，不能直接调用，所以需要通过网络来表达调用的语义和传达调 用的数据。
+需要注意的是RPC并不是一个具体的技术，而是指整个网络远程调用过程。
+RPC架构 一个完整的RPC架构里面包含了四个核心的组件，分别是Client，Client Stub，Server以及Server Stub，这个Stub 可以理解为存根。
+ 客户端(Client)，服务的调用方。 客户端存根(Client Stub)，存放服务端的地址消息，再将客户端的请求参数打包成网络消息，然后通过网络远程发送给服务方。 服务端(Server)，真正的服务提供者。 服务端存根(Server Stub)，接收客户端发送过来的消息，将消息解包，并调用本地的方法。  RPC调用过程 (1) 客户端(client)以本地调用方式(即以接口的方式)调用服务;
+(2) 客户端存根(client stub)接收到调用后，负责将方法、参数等组装成能够进行网络传输的消息体(将消息体对象序列化为二进制);
+(3) 客户端通过sockets将消息发送到服务端;
+(4) 服务端存根( server stub)收到消息后进行解码(将消息对象反序列化);
+(5) 服务端存根( server stub)根据解码结果调用本地的服务;
+(6) 本地服务执行并将结果返回给服务端存根( server stub);
+(7) 服务端存根( server stub)将返回结果打包成消息(将结果消息对象序列化);
+(8) 服务端(server)通过sockets将消息发送到客户端;
+(9) 客户端存根(client stub)接收到结果消息，并进行解码(将结果消息发序列化);
+(10) 客户端(client)得到最终结果。
+RPC的目标是要把2、3、4、7、8、9这些步骤都封装起来。
+注意:无论是何种类型的数据，最终都需要转换成二进制流在网络上进行传输，数据的发送方需要将对象转换为二 进制流，而数据的接收方则需要把二进制流再恢复为对象。
+在java中RPC框架比较多，常见的有Hessian、gRPC、Thrift、HSF (High Speed Service Framework)、Dubbo 等，其实对 于RPC框架而言，核心模块 就是通讯和序列化]]></description>
 </item><item>
     <title>分布式理论</title>
-    <link>http://lei-zz.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F/</link>
+    <link>http://lei-zz.github.io/%E5%88%86%E5%B8%83%E5%BC%8F/</link>
     <pubDate>Wed, 22 Jul 2020 14:40:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/%E5%88%86%E5%B8%83%E5%BC%8F/</guid>
-    <description><![CDATA[分布式 1.分布式系统架构 1.1概念 分布式系统是一个硬件或软件组件分布在不同的网络计算机上，彼此之间仅仅通过消息传递进行通信和协调 的系统。 俗的]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/%E5%88%86%E5%B8%83%E5%BC%8F/</guid>
+    <description><![CDATA[分布式 1.分布式系统架构 1.1概念 分布式系统是一个硬件或软件组件分布在不同的网络计算机上，彼此之间仅仅通过消息传递进行通信和协调 的系统。
+俗的理解，所谓分布式系统，就是一个业务拆分成多个子业务，分布在不同的服务器节点，共同构成的系统称为分 布式系统，同一个分布式系统中的服务器节点在空间部署上是可以随意分布的，这些服务器可能放在不同的机柜 中，也可能在不同的机房中，甚至分布在不同的城市。
+分布式与集群的区别:
+集群:多个人在一起作同样的事 。
+分布式 :多个人在一起作不同的事 。
+分布式系统的特点:
+(1)分布性
+(2)对等性
+(3)并发性
+(4)缺乏全局时钟
+(5)故障总是会发生
+1.2.分布式系统面临的问题 1)通信异常 网络本身的不可靠性，因此每次网络通信都会伴随着网络不可用的风险(光纤、路由、DNS等硬件设备或系统的不 可用)，都会导致最终分布式系统无法顺利进行一次网络通信，另外，即使分布式系统各节点之间的网络通信能够 正常执行，其延时也会大于单机操作，存在巨大的延时差别，也会影响消息的收发过程，因此消息丢失和消息延迟 变的非常普遍。
+2)网络分区 网络之间出现了网络不连通，但各个子网络的内部网络是正常的，从而导致整个系统的网络环境被切分成了若干个 孤立的区域，分布式系统就会出现局部小集群，在极端情况下，这些小集群会独立完成原本需要整个分布式系统才 能完成的功能，包括数据的事务处理，这就对分布式一致性提出非常大的挑战。
+3)节点故障 节点故障是分布式系统下另一个比较常见的问题，指的是组成分布式系统的服务器节点出现的宕机或&quot;僵死&quot;现象，
+根据经验来说，每个节点都有可能出现故障，并且经常发生.
+4)三态 分布式系统每一次请求与响应存在特有的“三态”概念，即成功、失败和超时。
+分布式系统中，由于网络是不可靠的，虽然绝大部分情况下，网络通信能够接收到成功或失败的响应，但当网络出 现异常的情况下，就会出现超时现象，通常有以下两种情况:
+  由于网络原因，该请求并没有被成功的发送到接收方，而是在发送过程就发生了丢失现象。
+  该请求成功的被接收方接收后，并进行了处理，但在响应反馈给发送方过程中，发生了消息丢失现象。
+  1.3.分布式理论:一致性 1)什么是分布式一致性 分布式数据一致性，指的是数据在多份副本中存储时，各副本中的数据是一致的。
+2)副本一致性 分布式系统当中，数据往往会有多个副本。如果是一台数据库处理所有的数据请求，那么通过ACID四原则，基本 可以保证数据的一致性。而多个副本就需要保证数据会有多份拷贝。这就带来了同步的问题，因为我们几乎没有办 法保证可以同时更新所有机器当中的包括备份所有数据。 网络延迟，即使我在同一时间给所有机器发送了更新数据 的请求，也不能保证这些请求被响应的时间保持一致存在时间差，就会存在某些机器之间的数据不一致的情况。
+3)一致性分类 强一致性 这种一致性级别是最符合用户直觉的，它要求系统写入什么，读出来的也会是什么，用户体验好，但实现起来往往 对系统的性能影响大。但是强一致性很难实现。
+弱一致性 这种一致性级别约束了系统在写入成功后，不承诺立即可以读到写入的值，也不承诺多久之后数据能够达到一致，
+但会尽可能地保证到某个时间级别(比如秒级别)后，数据能够达到一致状态。
+最终一致性 最终一致性是所有分布式一致性模型当中最弱的。可以认为是没有任何优化的“最”弱一致性，它的意思是说，我不考虑 所有的中间状态的影响，只保证当没有新的更新之后，经过一段时间之后，最终系统内所有副本的数据是正确的。 它最大程度上保证了系统的并发能力，也因此，在高并发的场景下，它也是使用最广的一致性模型。
+1.4.分布式理论:CAP定理 CAP定理 CAP 理论含义是，一个分布式系统不可能同时满足一致性(C:Consistency)，可用性(A: Availability)和分区容错 性(P:Partition tolerance)这三个基本需求，最多只能同时满足其中的2个。]]></description>
 </item><item>
     <title>Spring详解</title>
-    <link>http://lei-zz.github.io/posts/spring/</link>
+    <link>http://lei-zz.github.io/spring/</link>
     <pubDate>Fri, 17 Jul 2020 22:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/spring/</guid>
-    <description><![CDATA[Spring 概述 简介 Spring 是分层的 full-stack(全栈) 轻量级开源框架，以 IoC 和 AOP 为内核，提供了展现层 Spring MVC 和业务层事务管理等众多的企业级应用技术，还能]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/spring/</guid>
+    <description><![CDATA[Spring 概述 简介  Spring 是分层的 full-stack(全栈) 轻量级开源框架，以 IoC 和 AOP 为内核，提供了展现层 Spring MVC 和业务层事务管理等众多的企业级应用技术，还能整合开源世界众多著名的第三方框架和类库，已 经成为使用最多的 Java EE 企业应用开源框架。  优势   方便解耦，简化开发
+ 通过Spring提供的IoC容器，可以将对象间的依赖关系交由Spring进行控制，避免硬编码所造成的 过度程序耦合。用户也不必再为单例模式类、属性文件解析等这些很底层的需求编写代码，可以更 专注于上层的应用。    AOP编程的支持
+ 通过Spring的AOP功能，方便进行面向切面的编程，许多不容易用传统OOP实现的功能可以通过AOP轻松应付。    声明式事务的支持 @Transactional
+ 可以将我们从单调烦闷的事务管理代码中解脱出来，通过声明式方式灵活的进行事务的管理，提高 开发效率和质量。    方便程序的测试
+ 可以用非容器依赖的编程方式进行几乎所有的测试工作，测试不再是昂贵的操作，而是随手可做的 事情。    方便集成各种优秀框架
+ Spring可以降低各种框架的使用难度，提供了对各种优秀框架(Struts、Hibernate、Hessian、 Quartz等)的直接支持。    降低JavaEE API的使用难度
+ Spring对JavaEE API(如JDBC、JavaMail、远程调用等)进行了薄薄的封装层，使这些API的使用难度大为降低。    源码是经典的 Java 学习范例]]></description>
 </item><item>
     <title>Tomcat详解</title>
-    <link>http://lei-zz.github.io/posts/tomcat/</link>
+    <link>http://lei-zz.github.io/tomcat/</link>
     <pubDate>Tue, 14 Jul 2020 22:40:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/tomcat/</guid>
-    <description><![CDATA[Tomcat详解 目录结构 bin：tomocat启动文件 conf 1.logging.properties 日志配置； 2.server.xml服务器端口等配置； 3.tomcat-users.xml tomcat用户角色、权限配]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/tomcat/</guid>
+    <description><![CDATA[Tomcat详解 目录结构 bin：tomocat启动文件 conf  1.logging.properties 日志配置； 2.server.xml服务器端口等配置； 3.tomcat-users.xml tomcat用户角色、权限配置； 4.web.xml应用全局默认配置，若服务中进行了配置，则会覆盖  lib：基础jar包 temp ：临时文件 webapps ：发布项目的目录，管理界面 work：JSP 解析成Java类，中间会产生过程文件，编译运行中间文件 架构及原理剖析 架构   http请求过程
+  tomcat是一个http服务器，能够接收http请求
+  Tomcat Servlet容器处理流程
+ 1.HTTP服务器会把请求信息使用ServletRequest对象封装起来 ; 2.进一步去调用Servlet容器中某个具体Servlet; 3.在 (2)中，Servlet容器拿到请求后，根据URL和Servlet的映射关系，找到相应的Servlet ; 4.如果Servlet还没有被加载，就用反射机制创建这个Servlet，并调用Servlet的init方法来完成初始化 ; 5.接着调用这个具体Servlet的service方法来处理请求，请求处理结果使用ServletResponse对象封装 ; 6.把ServletResponse对象返回给HTTP服务器，HTTP服务器会把响应发送给客户端    总体架构，核心组件
+  连接器Connector
+  职责：负责对外交流: 处理Socket连接，负责网络字节流与Request和Response对象的转化;
+  连接器组件 Coyote
+  简介
+ 封装网络通信，(Socket 请求及响应处理) Catalina 容器(容器组件)与具体的请求协议及IO操作方式完全解耦 将Socket 输入转换封装为 Request 对象，进一步封装后交由Catalina 容器进行处理，处 理请求完成后, Catalina 通过Coyote 提供的Response 对象将结果写入输出流 Coyote 负责的是具体协议(应用层)和IO(传输层)相关内容    I/O模型及协议]]></description>
 </item><item>
     <title>Java基础-反射机制</title>
-    <link>http://lei-zz.github.io/posts/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/</link>
+    <link>http://lei-zz.github.io/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/</link>
     <pubDate>Mon, 13 Jul 2020 10:30:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/</guid>
-    <description><![CDATA[反射机制 思考 创建一个对象，有哪几种方式? 1、使用new关键字：这是我们最常见的也是最简单的创建对象的方式 2、使用Clone的方法：无论何时我]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/</guid>
+    <description><![CDATA[反射机制 思考 创建一个对象，有哪几种方式?
+1、使用new关键字：这是我们最常见的也是最简单的创建对象的方式
+2、使用Clone的方法：无论何时我们调用一个对象的clone方法，JVM就会创建一个新的对象，将前面的对象的内容全部拷贝进去
+3、使用反序列化：当我们序列化和反序列化一个对象，JVM会给我们创建一个单独的对象
+定义 JAVA反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意方法和属性；这种动态获取信息以及动态调用对象方法的功能称为java语言的反射机制。
+通俗的讲，反射就是把Java类中的各个部分，映射成一个个的Java对象，拿到这些对象后可以做一些事情。
+例如，一个类有：成员变量，方法，构造方法，等信息，利用反射技术咱们可以把这些组成部分映射成一个个对象。
+反射机制的相关类 与Java反射相关的类如下：
+   类名 用途     Class类 代表类的实体，在运行的Java应用程序中表示类和接口   Field类 代表类的成员变量（成员变量也称为类的属性）   Method类 代表类的方法   Constructor类 代表类的构造方法    Class类 Class代表类的实体，在运行的Java应用程序中表示类和接口。在这个类中提供了很多有用的方法，这里对他们简单的分类介绍。
+ 获得类相关的方法     方法 用途     asSubclass(Class clazz) 把传递的类的对象转换成代表其子类的对象   Cast 把对象转换成代表类或是接口的对象   getClassLoader() 获得类的加载器   getClasses() 返回一个数组，数组中包含该类中所有公共类和接口类的对象   getDeclaredClasses() 返回一个数组，数组中包含该类中所有类和接口类的对象   forName(String className) 根据类名返回类的对象   getName() 获得类的完整路径名字   newInstance() 创建类的实例   getPackage() 获得类的包   getSimpleName() 获得类的名字   getSuperclass() 获得当前类继承的父类的名字   getInterfaces() 获得当前类实现的类或是接口     获得类中属性相关的方法     方法 用途     getField(String name) 获得某个公有的属性对象   getFields() 获得所有公有的属性对象   getDeclaredField(String name) 获得某个属性对象   getDeclaredFields() 获得所有属性对象     获得类中注解相关的方法     方法 用途     getAnnotation(Class annotationClass) 返回该类中与参数类型匹配的公有注解对象   getAnnotations() 返回该类所有的公有注解对象   getDeclaredAnnotation(Class annotationClass) 返回该类中与参数类型匹配的所有注解对象   getDeclaredAnnotations() 返回该类所有的注解对象     获得类中构造器相关的方法     方法 用途     getConstructor(Class&hellip;&lt;?]]></description>
 </item><item>
     <title>理解代理模式、静态代理、动态代理、CGlib、AOP</title>
-    <link>http://lei-zz.github.io/posts/%E7%90%86%E8%A7%A3%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86cglibaop/</link>
+    <link>http://lei-zz.github.io/%E7%90%86%E8%A7%A3%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86cglibaop/</link>
     <pubDate>Mon, 13 Jul 2020 00:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/%E7%90%86%E8%A7%A3%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86cglibaop/</guid>
-    <description><![CDATA[理解代理模式、静态代理、动态代理、CGlib、AOP 代理模式 定义 为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/%E7%90%86%E8%A7%A3%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86cglibaop/</guid>
+    <description><![CDATA[理解代理模式、静态代理、动态代理、CGlib、AOP 代理模式 定义 为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。
+组成 抽象角色：通过接口或抽象类声明真实角色实现的业务方法。
+代理角色：实现抽象角色，是真实角色的代理，通过真实角色的业务逻辑方法来实现抽象方法，并可以附加自己的操作。
+真实角色：实现抽象角色，定义真实角色所要实现的业务逻辑，供代理角色调用。
+优点 (1).职责清晰 真实的角色就是实现实际的业务逻辑，不用关心其他非本职责的事务，通过后期的代理完成一件完成事务，附带的结果就是编程简洁清晰。
+(2).代理对象可以在客户端和目标对象之间起到中介的作用，这样起到了中介的作用和保护了目标对象的作用。
+(3).高扩展性
+应用场景 （1）最经典的就是Spring AOP的实现，通过代理实现了日志记录，事务，方法耗时等非核心业务本职责的功能的统一控制。
+（2）在Hibernate类似相关的框架中，仅仅定义接口就可以通过代理动态实现CURD相关操作。
+（3）其他各种字节码操纵的场景。
+Java 代理模式实现方式，主要有如下五种方法  静态代理，工程师编辑代理类代码，实现代理模式；在编译期就生成了代理类。 基于 JDK 实现动态代理，通过jdk提供的工具方法Proxy.newProxyInstance动态构建全新的代理类(继承Proxy类，并持有InvocationHandler接口引用 )字节码文件并实例化对象返回。(jdk动态代理是由java内部的反射机制来实例化代理对象，并代理的调用委托类方法) 基于CGlib 动态代理模式 基于继承被代理类生成代理子类，不用实现接口。只需要被代理类是非final 类即可。(cglib动态代理底层是借助asm字节码技术） 基于 Aspectj 实现动态代理（修改目标类的字节，织入代理的字节，在程序编译的时候 插入动态代理的字节码，不会生成全新的Class ） 基于 instrumentation 实现动态代理（修改目标类的字节码、类装载的时候动态拦截去修改，基于javaagent） -javaagent:spring-instrument-4.3.8.RELEASE.jar （类装载的时候 插入动态代理的字节码，不会生成全新的Class ）  Notes  委托类 即指的是代理模式中的被代理对象 代理类 指的是生成的代表委托类的一个角色  静态代理实现 静态代理是代理类在编译期间就创建好了，不是编译器生成的代理类，而是手动创建的类。在编译时就已经将接口，被代理类，代理类等确定下来。，软件设计中所指的代理一般是指静态代理，也就是在代码中显式指定的代理。
+实现步骤  委托类和代理类之间的约束接口Cat 约束接口实现类 Lion，实现 Cat 接口，委托角色 代理类实现 FeederProxy，实现Cat 接口，并含有一个 Cat接口引用属性。 代理角色，代理 cat接口属性引用实例的行为并可以新增公共逻辑  委托类Cat
+1 2 3 4 5 6 7  public interface Cat { public String eatFood(String foodName); public boolean running(); }   实现类Lion]]></description>
 </item><item>
     <title>Linux常用命令</title>
-    <link>http://lei-zz.github.io/posts/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</link>
+    <link>http://lei-zz.github.io/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</link>
     <pubDate>Sun, 12 Jul 2020 00:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
-    <description><![CDATA[Linux常用命令 1、ls命令 就是 list 的缩写，通过 ls 命令不仅可以查看 linux 文件夹包含的文件，而且可以查看文件权限(包括目录、文件夹、文件权限)查]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
+    <description><![CDATA[Linux常用命令 1、ls命令 就是 list 的缩写，通过 ls 命令不仅可以查看 linux 文件夹包含的文件，而且可以查看文件权限(包括目录、文件夹、文件权限)查看目录信息等等。
+常用参数搭配：
+1 2 3 4 5 6 7  ls -a 列出目录所有文件，包含以.开始的隐藏文件 ls -A 列出除.及..的其它文件 ls -r 反序排列 ls -t 以文件修改时间排序 ls -S 以文件大小排序 ls -h 以易读大小显示 ls -l 除了文件名之外，还将文件的权限、所有者、文件大小等信息详细列出来   实例：
+(1) 按易读方式按时间反序排序，并显示文件详细信息
+1  ls -lhrt   (2) 按大小反序显示文件详细信息
+1  ls -lrS   (3)列出当前目录中所有以&quot;t&quot;开头的目录的详细内容
+1  ls -l t*   (4) 列出文件绝对路径（不包含隐藏文件）
+1  ls|sed&#34;s:^:`pwd`/:&#34;  (5) 列出文件绝对路径（包含隐藏文件）]]></description>
 </item></channel>
 </rss>

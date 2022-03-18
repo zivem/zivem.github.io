@@ -1,14 +1,27 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>代理 - 标签 - 我的全新 Hugo 网站</title>
+        <title>代理 - Tag - Z</title>
         <link>http://lei-zz.github.io/tags/%E4%BB%A3%E7%90%86/</link>
-        <description>代理 - 标签 - 我的全新 Hugo 网站</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Mon, 13 Jul 2020 00:00:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/tags/%E4%BB%A3%E7%90%86/" rel="self" type="application/rss+xml" /><item>
+        <description>代理 - Tag - Z</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>lei.zz0309@gmail.com (lei.zz)</managingEditor>
+            <webMaster>lei.zz0309@gmail.com (lei.zz)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 13 Jul 2020 00:00:00 &#43;0000</lastBuildDate><atom:link href="http://lei-zz.github.io/tags/%E4%BB%A3%E7%90%86/" rel="self" type="application/rss+xml" /><item>
     <title>理解代理模式、静态代理、动态代理、CGlib、AOP</title>
-    <link>http://lei-zz.github.io/posts/%E7%90%86%E8%A7%A3%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86cglibaop/</link>
+    <link>http://lei-zz.github.io/%E7%90%86%E8%A7%A3%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86cglibaop/</link>
     <pubDate>Mon, 13 Jul 2020 00:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>http://lei-zz.github.io/posts/%E7%90%86%E8%A7%A3%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86cglibaop/</guid>
-    <description><![CDATA[理解代理模式、静态代理、动态代理、CGlib、AOP 代理模式 定义 为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或]]></description>
+    <author>Author</author>
+    <guid>http://lei-zz.github.io/%E7%90%86%E8%A7%A3%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86cglibaop/</guid>
+    <description><![CDATA[理解代理模式、静态代理、动态代理、CGlib、AOP 代理模式 定义 为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。
+组成 抽象角色：通过接口或抽象类声明真实角色实现的业务方法。
+代理角色：实现抽象角色，是真实角色的代理，通过真实角色的业务逻辑方法来实现抽象方法，并可以附加自己的操作。
+真实角色：实现抽象角色，定义真实角色所要实现的业务逻辑，供代理角色调用。
+优点 (1).职责清晰 真实的角色就是实现实际的业务逻辑，不用关心其他非本职责的事务，通过后期的代理完成一件完成事务，附带的结果就是编程简洁清晰。
+(2).代理对象可以在客户端和目标对象之间起到中介的作用，这样起到了中介的作用和保护了目标对象的作用。
+(3).高扩展性
+应用场景 （1）最经典的就是Spring AOP的实现，通过代理实现了日志记录，事务，方法耗时等非核心业务本职责的功能的统一控制。
+（2）在Hibernate类似相关的框架中，仅仅定义接口就可以通过代理动态实现CURD相关操作。
+（3）其他各种字节码操纵的场景。
+Java 代理模式实现方式，主要有如下五种方法  静态代理，工程师编辑代理类代码，实现代理模式；在编译期就生成了代理类。 基于 JDK 实现动态代理，通过jdk提供的工具方法Proxy.newProxyInstance动态构建全新的代理类(继承Proxy类，并持有InvocationHandler接口引用 )字节码文件并实例化对象返回。(jdk动态代理是由java内部的反射机制来实例化代理对象，并代理的调用委托类方法) 基于CGlib 动态代理模式 基于继承被代理类生成代理子类，不用实现接口。只需要被代理类是非final 类即可。(cglib动态代理底层是借助asm字节码技术） 基于 Aspectj 实现动态代理（修改目标类的字节，织入代理的字节，在程序编译的时候 插入动态代理的字节码，不会生成全新的Class ） 基于 instrumentation 实现动态代理（修改目标类的字节码、类装载的时候动态拦截去修改，基于javaagent） -javaagent:spring-instrument-4.3.8.RELEASE.jar （类装载的时候 插入动态代理的字节码，不会生成全新的Class ）  Notes  委托类 即指的是代理模式中的被代理对象 代理类 指的是生成的代表委托类的一个角色  静态代理实现 静态代理是代理类在编译期间就创建好了，不是编译器生成的代理类，而是手动创建的类。在编译时就已经将接口，被代理类，代理类等确定下来。，软件设计中所指的代理一般是指静态代理，也就是在代码中显式指定的代理。
+实现步骤  委托类和代理类之间的约束接口Cat 约束接口实现类 Lion，实现 Cat 接口，委托角色 代理类实现 FeederProxy，实现Cat 接口，并含有一个 Cat接口引用属性。 代理角色，代理 cat接口属性引用实例的行为并可以新增公共逻辑  委托类Cat
+1 2 3 4 5 6 7  public interface Cat { public String eatFood(String foodName); public boolean running(); }   实现类Lion]]></description>
 </item></channel>
 </rss>
