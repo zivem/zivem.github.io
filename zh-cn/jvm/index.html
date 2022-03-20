@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>JVM基础 - Z</title><meta name="Description" content="关于Z"><meta property="og:title" content="JVM基础" />
+<meta property="og:description" content="JVM基础 如何避免OutOfMemory hotspot 为了避免由新生代对象晋升道老年代，导致老年代空间不足的情况 在进行Minor GC时，判断之前晋升平均" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/zh-cn/jvm/" /><meta property="og:image" content="47"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-02-12T15:58:26+08:00" />
+<meta property="article:modified_time" content="2022-03-19T22:51:18+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="47"/>
+
+<meta name="twitter:title" content="JVM基础"/>
+<meta name="twitter:description" content="JVM基础 如何避免OutOfMemory hotspot 为了避免由新生代对象晋升道老年代，导致老年代空间不足的情况 在进行Minor GC时，判断之前晋升平均"/>
+<meta name="application-name" content="Z">
+<meta name="apple-mobile-web-app-title" content="Z"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="/zh-cn/jvm/" /><link rel="prev" href="/zh-cn/zookeeper/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "JVM基础",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "\/zh-cn\/jvm\/"
+        },"image": ["\/images\/Apple-Devices-Preview.png"],"genre": "posts","wordcount":  4794 ,
+        "url": "\/zh-cn\/jvm\/","datePublished": "2021-02-12T15:58:26+08:00","dateModified": "2022-03-19T22:51:18+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "\/images\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "lei.zz"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/zh-cn/" title="Z"><img
+        class="lazyload logo"
+        src="/svg/loading.min.svg"
+        data-src="/images/logo/logo.png"
+        data-srcset="/images/logo/logo.png, /images/logo/logo.png 1.5x, /images/logo/logo.png 2x"
+        data-sizes="auto"
+        alt="/images/logo/logo.png"
+        title="/images/logo/logo.png" />Z</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/zh-cn/posts/"> 所有文章 </a><a class="menu-item" href="/zh-cn/tags/"> 标签 </a><a class="menu-item" href="/zh-cn/categories/"> 分类 </a><a class="menu-item" href="/zh-cn/https:/github.com/lei-zz/lei-zz.github.io" title="GitHub"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item language" title="选择语言">简体中文<i class="fas fa-chevron-right fa-fw"></i>
+                        <select class="language-select" id="language-select-desktop" onchange="location = this.value;"><option value="/zh-cn/jvm/" selected>简体中文</option></select>
+                    </a><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/zh-cn/" title="Z"><img
+        class="lazyload logo"
+        src="/svg/loading.min.svg"
+        data-src="/images/logo/logo.png"
+        data-srcset="/images/logo/logo.png, /images/logo/logo.png 1.5x, /images/logo/logo.png 2x"
+        data-sizes="auto"
+        alt="/images/logo/logo.png"
+        title="/images/logo/logo.png" />Z</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/zh-cn/posts/" title="">所有文章</a><a class="menu-item" href="/zh-cn/tags/" title="">标签</a><a class="menu-item" href="/zh-cn/categories/" title="">分类</a><a class="menu-item" href="/zh-cn/https:/github.com/lei-zz/lei-zz.github.io" title="GitHub"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a><a href="javascript:void(0);" class="menu-item" title="选择语言">简体中文<i class="fas fa-chevron-right fa-fw"></i>
+                    <select class="language-select" onchange="location = this.value;"><option value="/zh-cn/jvm/" selected>简体中文</option></select>
+                </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">JVM基础</h1><h2 class="single-subtitle">Jvm常见问题</h2><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/zh-cn/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>lei.zz</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-02-12">2021-02-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4794 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 10 分钟&nbsp;<span id="/zh-cn/jvm/" class="leancloud_visitors" data-flag-title="JVM基础">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="featured-image"><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="../img/banner/class.jpg"
+        data-srcset="../img/banner/class.jpg, ../img/banner/class.jpg 1.5x, ../img/banner/class.jpg 2x"
+        data-sizes="auto"
+        alt="../img/banner/class.jpg"
+        title="../img/banner/class.jpg" /></div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#如何避免outofmemory">如何避免OutOfMemory</a>
+      <ul>
+        <li><a href="#hotspot">hotspot</a></li>
+      </ul>
+    </li>
+    <li><a href="#java虚拟机是什么java为什么被称作是平台无关的编程语言">Java虚拟机是什么？Java为什么被称作是“平台无关的编程语言”？</a></li>
+    <li><a href="#对象分配规则">对象分配规则</a></li>
+    <li><a href="#jvm加载class原理机制">JVM加载class原理机制</a></li>
+    <li><a href="#java对象创建过程">Java对象创建过程</a></li>
+    <li><a href="#类的生命周期">类的生命周期</a></li>
+    <li><a href="#java对象结构">Java对象结构</a></li>
+    <li><a href="#jvm永久代会发生垃圾回收吗">JVM永久代会发生垃圾回收吗？</a></li>
+    <li><a href="#常用命令">常用命令</a></li>
+    <li><a href="#性能调优参数">性能调优参数</a></li>
+    <li><a href="#对象一定分配在堆上吗什么是逃逸分析">对象一定分配在堆上吗？什么是逃逸分析？</a></li>
+    <li><a href="#虚拟机为什么使用元空间替换了永久代"><strong>虚拟机为什么使用元空间替换了永久代？</strong></a>
+      <ul>
+        <li><a href="#什么是元空间什么是永久代为什么用元空间代替永久代"><strong>「什么是元空间？什么是永久代？为什么用元空间代替永久代？」</strong></a></li>
+        <li><a href="#什么是永久代它和方法区有什么关系呢"><strong>「什么是永久代？它和方法区有什么关系呢？」</strong></a>
+          <ul>
+            <li><a href="#什么是元空间它和方法区有什么关系呢"><strong>「什么是元空间？它和方法区有什么关系呢？」</strong></a></li>
+            <li><a href="#为什么使用元空间替换了永久代"><strong>「为什么使用元空间替换了永久代？」</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#所以为什么使用元空间替换永久代"><strong>「所以，为什么使用元空间替换永久代？」</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#什么是stop-the-world-什么是oopmap什么是安全点">什么是Stop The World ?什么是OopMap？什么是安全点？</a>
+      <ul>
+        <li><a href="#stop-the-world">Stop The World</a></li>
+        <li><a href="#oopmap">OopMap</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="jvm基础">JVM基础</h1>
+<h2 id="如何避免outofmemory">如何避免OutOfMemory</h2>
+<h3 id="hotspot">hotspot</h3>
+<p>为了避免由新生代对象晋升道老年代，导致老年代空间不足的情况</p>
+<p>在进行Minor GC时，判断之前晋升平均大小，大于老年代剩余空间，直接触发Full GC</p>
+<p>例如：第一次触发MinorGc，有6MB对象晋升，再次MinorGC，老年代剩余空间小于6MB，则直接Full GC.</p>
+<p>新生代</p>
+<p>采用PSGC，在Minor GC，检查老年代剩余空间，小于6MB，触发对老年代回收。</p>
+<p>除此之外，使用RMI进行RPC管理Sun JDK，默认情况下会一小时执行一次Full GC</p>
+<p>可通过 java-Dsun.rmi.dgc.client.gcInterval=3600000设置间隔时间</p>
+<p>-XX:+DisableExplicitGC来禁止RMI调用System.gc</p>
+<h2 id="java虚拟机是什么java为什么被称作是平台无关的编程语言">Java虚拟机是什么？Java为什么被称作是“平台无关的编程语言”？</h2>
+<p>Java虚拟机是一个可以执行Java字节码的虚拟机进程。</p>
+<p>Java源文件被编译成能被Java虚拟机执行的字节码文件。</p>
+<p>Java被设计成允许应用程序可以运行在任意的平台，而不需要程序员为每一个平台单独重写或者是重新编译。</p>
+<p>Java虚拟机让这个变为可能，因为它知道底层硬件平台的指令长度和其他特</p>
+<p>性。</p>
+<h2 id="对象分配规则">对象分配规则</h2>
+<ul>
+<li>
+<p>对象优先分配在Eden区，没有足够空间，则执行一次Minor GC</p>
+</li>
+<li>
+<p>大对象直接进入老年代，（大对象指需要大量连续内存空间的对象），这样避免Eden区和俩个Survivor区之间发生大量的内存拷贝（新生代采用的复制算法进行内存回收）</p>
+</li>
+<li>
+<p>长期存活对象进入Surivivor区，经历两次Minor GC 就会进入老年代</p>
+</li>
+<li>
+<p>动态判断对象年龄，若Survivor中相同年龄的所有对象，大小综合大于Survivor空间一般，年龄大于或等于该年龄的对象可以直接进入老年代</p>
+</li>
+<li>
+<p>空间分配担保。Minor GC，JVM计算Survivor区晋升老年代的对象平均大小，大于老年代剩余空间大小，进行Full GC.</p>
+<p>小于时，HandlePromotionFailre = true ，只进行Monitor GC，false则进行Full GC。</p>
+</li>
+</ul>
+<h2 id="jvm加载class原理机制">JVM加载class原理机制</h2>
+<p>jvm中类的装在由类加载器classLoader和其子类实现</p>
+<p>类的加载过程：  加载、连接（验证、准备和解析）和初始化。</p>
+<ul>
+<li>
+<p>加载</p>
+<p>类的加载是指把类的.class文件中的数据读入到内存中，通常是创建一个字节数组读入.class文件，然后产生与所加载类对应的Class对象。</p>
+</li>
+<li>
+<p>连接</p>
+<p>加载完成后，Class对象还不完整，所以此时的类还不可用。当类被加载后就进入连接阶段，这一阶段包括验证、准备（为静态变量分配内存并设置默认的初始值）和解析（将符号引用替换为直接引用）三个步骤。</p>
+</li>
+<li>
+<p>初始化</p>
+<p>最后JVM对类进行初始化，包括：</p>
+<ul>
+<li>1)如果类存在直接的父类并且这个类还没有被初始化，那么就先初始化父类；</li>
+<li>2)如果类中存在初始化语句，就依次执行这些初始化语句。</li>
+</ul>
+</li>
+</ul>
+<p>类的加载是由类加载器完成的，类加载器包括：根加载器（BootStrap）、扩展加载器（Extension）、系统加载器（System）和用户自定义类加载器（java.lang.ClassLoader的子类）。</p>
+<p>Bootstrap：一般用本地代码实现，负责加载JVM基础核心类库（rt.jar）；</p>
+<p>Extension：从java.ext.dirs系统属性所指定的目录中加载类库，它的父加载器是Bootstrap；</p>
+<p>System：又叫应用类加载器，其父类是Extension。它是应用最广泛的类加载器。它从环境变量classpath或者系统属性java.class.path所指定的目录中记载类，是用户自定义加载器的默认父加载器。</p>
+<h2 id="java对象创建过程">Java对象创建过程</h2>
+<p>1.JVM遇到一条新建对象的指令时首先去检查这个指令的参数是否能在常量池中定义到一个类的符号引用。然后加载这个类</p>
+<p>2.为对象分配内存。一种办法“指针碰撞”、一种办法“空闲列表”，最终常用的办法“本地线程缓冲分配(TLAB)”</p>
+<p>3.将除对象头外的对象内存空间初始化为0</p>
+<p>4.对对象头进行必要设置</p>
+<h2 id="类的生命周期">类的生命周期</h2>
+<figure><img src="../img/jvm/classlife.png"/><figcaption>
+            <h4>类的生命周期</h4>
+        </figcaption>
+</figure>
+
+<ul>
+<li>加载，查找并加载类的二进制数据，在Java堆中也创建一个java.lang.Class类的对象</li>
+<li>连接，连接又包含三块内容：验证、准备、初始化。
+<ul>
+<li>1）验证，文件格式、元数据、字节码、符号引用验证；</li>
+<li>2）准备，为类的静态变量分配内存，并将其初始化为默认值；</li>
+<li>3）解析，把类中的符号引用转换为直接引用</li>
+</ul>
+</li>
+<li>初始化，为类的静态变量赋予正确的初始值</li>
+<li>使用，new出对象程序中使用</li>
+<li>卸载，执行垃圾回收</li>
+</ul>
+<h2 id="java对象结构">Java对象结构</h2>
+<p>Java对象由三个部分组成：对象头、实例数据、对齐填充。</p>
+<figure><img src="../img/jvm/javaObj.png"/><figcaption>
+            <h4>java对象结构</h4>
+        </figcaption>
+</figure>
+
+<ul>
+<li>
+<p>对象头：</p>
+<ul>
+<li>第一部分存储对象自身的运行时数据：哈希码、GC分代年龄、锁标识状态、线程持有的锁、偏向线程ID（一般占32/64 bit）。</li>
+<li>第二部分是指针类型，指向对象的类元数据类型（即对象代表哪个类）。如果是数组对象，则对象头中还有一部分用来记录数组长度。</li>
+</ul>
+</li>
+<li>
+<p>实例数据：用来存储对象真正的有效信息（包括父类继承下来的和自己定义的）</p>
+</li>
+<li>
+<p>对齐填充：JVM要求对象起始地址必须是8字节的整数倍（8字节对齐）</p>
+</li>
+</ul>
+<h2 id="jvm永久代会发生垃圾回收吗">JVM永久代会发生垃圾回收吗？</h2>
+<p>有垃圾回收，只是条件难以达到，主要回收：<strong>常量池中废弃的常量和不在使用的类型(类)</strong></p>
+<p>但是判断一个类型是否属于“不在被使用的类”的条件就非常苛刻了。需要同时满足以下三个条件：</p>
+<pre><code> 1、该类的所有实例都已经被回收，也就是堆中不存在该类及其任何派生子类的实例。
+
+ 2、加载该类的类加载器已经被回收，这个条件通常是很难达到的。
+
+ 3、该类对应的java.lang.Class对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。
+</code></pre>
+<h2 id="常用命令">常用命令</h2>
+<ul>
+<li>jps，JVM Process Status Tool,显示指定系统内所有的HotSpot虚拟机进程。</li>
+<li>jstat，JVM statistics Monitoring是用于监视虚拟机运行时状态信息的命令，它可以显示出虚拟</li>
+<li>机进程中的类装载、内存、垃圾收集、JIT编译等运行数据。</li>
+<li>jmap，JVM Memory Map命令用于生成heap dump文件</li>
+<li>jhat，JVM Heap Analysis Tool命令是与jmap搭配使用，用来分析jmap生成的dump，jhat内</li>
+<li>置了一个微型的HTTP/HTML服务器，生成dump的分析结果后，可以在浏览器中查看</li>
+<li>jstack，用于生成java虚拟机当前时刻的线程快照。</li>
+<li>jinfo，JVM Confifiguration info 这个命令作用是实时查看和调整虚拟机运行参数。</li>
+</ul>
+<h2 id="性能调优参数">性能调优参数</h2>
+<ul>
+<li>
+<p>设定堆内存大小</p>
+<p>-Xmx：堆内存最大限制。</p>
+</li>
+<li>
+<p>设定新生代大小。 新生代不宜太小，否则会有大量对象涌入老年代</p>
+<p>-XX:NewSize：新生代大小</p>
+<p>-XX:NewRatio 新生代和老生代占比</p>
+<p>-XX:SurvivorRatio：伊甸园空间和幸存者空间的占比</p>
+</li>
+<li>
+<p>设定垃圾回收器</p>
+<ul>
+<li>年轻代用 -XX:+UseParNewGC</li>
+<li>年老代用-XX:+UseConcMarkSweepGC</li>
+</ul>
+</li>
+</ul>
+<h2 id="对象一定分配在堆上吗什么是逃逸分析">对象一定分配在堆上吗？什么是逃逸分析？</h2>
+<p><strong>「对象一定分配在堆中吗？」</strong> 不一定的，JVM通过**「逃逸分析」<strong>，那些</strong>逃不出方法的对象会在栈上分配。**</p>
+<p><strong>「什么是逃逸分析？」</strong></p>
+<p>逃逸分析(Escape Analysis)，是一种可以有效减少Java 程序中同步负载和内存堆分配压力的跨函数全局数据流分析算法。</p>
+<p>通过逃逸分析，Java Hotspot编译器能够分析出一个新的对象的引用的使用范围，从而决定是否要将这个对象分配到堆上。</p>
+<p><strong>逃逸分析</strong>是指分析指针动态范围的方法，它同编译器优化原理的指针分析和外形分析相关联。当变量（或者对象）在方法中分配后，其指针有可能被返回或者被全局引用，这样就会被其他方法或者线程所引用，这种现象称作指针（或者引用）的逃逸(Escape)。</p>
+<p><strong>通俗点讲，如果一个对象的指针被多个方法或者线程引用时，那么我们就称这个对象的指针发生了逃逸</strong>。</p>
+<p><strong>「逃逸分析的好处」</strong></p>
+<ul>
+<li>
+<p>栈上分配，可以降低垃圾收集器运行的频率。</p>
+</li>
+<li>
+<p>同步消除，如果发现某个对象只能从一个线程可访问，那么在这个对象上的操作可以不需要同步。</p>
+</li>
+<li>
+<p>标量替换，把对象分解成一个个基本类型，并且内存分配不再是分配在堆上，而是分配在栈上。这样的好处有，</p>
+<ul>
+<li>一、减少内存使用，因为不用生成对象头。</li>
+<li>二、程序内存回收效率高，并且GC频率也会减少。</li>
+</ul>
+</li>
+</ul>
+<h2 id="虚拟机为什么使用元空间替换了永久代"><strong>虚拟机为什么使用元空间替换了永久代？</strong></h2>
+<h3 id="什么是元空间什么是永久代为什么用元空间代替永久代"><strong>「什么是元空间？什么是永久代？为什么用元空间代替永久代？」</strong></h3>
+<p>我们先回顾一下**「方法区」**吧,看</p>
+<p>看虚拟机运行时数据内存图，如下:</p>
+<figure><img src="../img/jvm/methodSpace.png"/><figcaption>
+            <h4>虚拟机运行时数据内存</h4>
+        </figcaption>
+</figure>
+
+<p>方法区和堆一样，是各个线程共享的内存区域，它用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译后的代码等数据。</p>
+<h3 id="什么是永久代它和方法区有什么关系呢"><strong>「什么是永久代？它和方法区有什么关系呢？」</strong></h3>
+<p>如果在HotSpot虚拟机上开发、部署，很多程序员都把方法区称作永久代。可以说方法区是规范，<strong>永久代是Hotspot针对该规范进行的实现</strong>。在Java7及以前的版本，<strong>方法区都是永久代实现的</strong>。</p>
+<h4 id="什么是元空间它和方法区有什么关系呢"><strong>「什么是元空间？它和方法区有什么关系呢？」</strong></h4>
+<p>对于Java8，HotSpots取消了永久代，取而代之的是元空间(Metaspace)。换句话说，就是<strong>方法区还是在的，只是实现变了，从永久代变为元空间了</strong>。</p>
+<h4 id="为什么使用元空间替换了永久代"><strong>「为什么使用元空间替换了永久代？」</strong></h4>
+<p>永久代的方法区，和堆使用的物理内存是连续的。</p>
+<figure><img src="../img/jvm/PGen.png"/>
+</figure>
+
+<p>**「永久代」**是通过以下这两个参数配置大小的~</p>
+<ul>
+<li>
+<p>-XX:PremSize：设置永久代的初始大小</p>
+</li>
+<li>
+<p>-XX:MaxPermSize: 设置永久代的最大值，默认是64M</p>
+</li>
+</ul>
+<p>对于**「永久代」<strong>，如果动态生成很多class的话，就很可能出现</strong>「java.lang.OutOfMemoryError:PermGen space 错误」**，因为永久代空间配置有限嘛。最典型的场景是，在web开发比较多jsp页面的时候。</p>
+<p>JDK8之后，方法区存在于元空间(Metaspace)。物理内存不再与堆连续，而是<strong>直接存在于本地内存中</strong>，理论上机器**「内存有多大，元空间就有多大」**。</p>
+<figure><img src="../img/jvm/jvmSpaceModel.png"/>
+</figure>
+
+<p>可以通过以下的参数来设置元空间的大小：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">-XX:MetaspaceSize，初始空间大小，达到该值就会触发垃圾收集进行类型卸载，同时GC会对该值进行调整：
+如果释放了大量的空间，就适当降低该值；如果释放了很少的空间，那么在不超过MaxMetaspaceSize时，适当提高该值。
+
+-XX:MaxMetaspaceSize，最大空间，默认是没有限制的。
+
+-XX:MinMetaspaceFreeRatio，在GC之后，最小的Metaspace剩余空间容量的百分比，减少为分配空间所导致的垃圾收集
+
+-XX:MaxMetaspaceFreeRatio，在GC之后，最大的Metaspace剩余空间容量的百分比，减少为释放空间所导致的垃圾收集
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="所以为什么使用元空间替换永久代"><strong>「所以，为什么使用元空间替换永久代？」</strong></h3>
+<p>表面上看是为了避免OOM异常。因为通常使用PermSize和MaxPermSize设置永久代的大小就</p>
+<p>决定了永久代的上限，但是不是总能知道应该设置为多大合适, 如果使用默认值很容易遇到OOM错误。</p>
+<p><strong>当使用元空间时，可以加载多少类的元数据就不再由MaxPermSize控制, 而由系统的实际可用空间来控制啦</strong>。</p>
+<h2 id="什么是stop-the-world-什么是oopmap什么是安全点">什么是Stop The World ?什么是OopMap？什么是安全点？</h2>
+<h3 id="stop-the-world">Stop The World</h3>
+<p>进行垃圾回收的过程中，会涉及对象的移动。为了保证对象引用更新的正确性，必须暂停所有的用户线程，像这样的停顿，虚拟机设计者形象描述为**「top The World」**。也简称为STW。</p>
+<h3 id="oopmap">OopMap</h3>
+<p>在HotSpot中，有个数据结构（映射表）称为**「OopMap」**。一旦类加载动作完成的时候，HotSpot就会把对象内什么偏移量上是什么类型的数据计算出来，记录到OopMap。</p>
+<p>在即时编译过程中，也会在**「特定的位置」**生成 OopMap，记录下栈上和寄存器里哪些位置是引用。</p>
+<p>这些特定的位置主要在：</p>
+<ol>
+<li>循环的末尾（非 counted 循环）</li>
+<li>方法临返回前 / 调用方法的call指令后</li>
+<li>可能抛异常的位置</li>
+</ol>
+<p>这些位置就叫作**「安全点(safepoint)。」** 用户程序执行时并非在代码指令流的任意位置都能够在停顿下来开始垃圾收集，而是<strong>必须是执行到安全点才能够暂停</strong>。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2022-03-19&nbsp;<a class="git-hash" href="https://github.com/lei-zz/lei-zz.github.io/commit/12a1766f46d04cfbd128b9d1384249085114d301" target="_blank" title="commit by 1461310287@qq.com(1461310287@qq.com) 12a1766f46d04cfbd128b9d1384249085114d301: change logo">
+                                    <i class="fas fa-hashtag fa-fw"></i>12a1766</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/zh-cn/jvm/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="/zh-cn/jvm/" data-title="JVM基础"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="/zh-cn/jvm/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="/zh-cn/jvm/" data-title="JVM基础"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="/zh-cn/jvm/" data-title="JVM基础"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="/zh-cn/jvm/" data-title="JVM基础" data-image="../img/banner/class.jpg"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/zh-cn/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/zh-cn/zookeeper/" class="prev" rel="prev" title="ZooKeeper基本理解"><i class="fas fa-angle-left fa-fw"></i>ZooKeeper基本理解</a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/zh-cn/" target="_blank">lei.zz</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/css/lightgallery.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/js/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-thumbnail.js@1.2.0/dist/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.2.0/dist/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI","appKey":"WBmoGyJtbqUswvfLh6L8iEBr","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"zh-cn","pageSize":10,"placeholder":"你的评论 ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"DKS4FQ4NM8","algoliaIndex":"new-index-1647619849","algoliaSearchKey":"06463a93a6297b575b6669a10a43b650","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

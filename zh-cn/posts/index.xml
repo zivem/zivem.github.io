@@ -1,0 +1,80 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>所有文章 - Z</title>
+        <link>/zh-cn/posts/</link>
+        <description>所有文章 | Z</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>lei.zz0309@gmail.com (lei.zz)</managingEditor>
+            <webMaster>lei.zz0309@gmail.com (lei.zz)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 12 Feb 2021 15:58:26 &#43;0800</lastBuildDate><atom:link href="/zh-cn/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>JVM基础</title>
+    <link>/zh-cn/jvm/</link>
+    <pubDate>Fri, 12 Feb 2021 15:58:26 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>/zh-cn/jvm/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="/../img/banner/class.jpg" referrerpolicy="no-referrer">
+            </div>JVM基础 如何避免OutOfMemory hotspot 为了避免由新生代对象晋升道老年代，导致老年代空间不足的情况 在进行Minor GC时，判断之前晋升平均]]></description>
+</item><item>
+    <title>ZooKeeper基本理解</title>
+    <link>/zh-cn/zookeeper/</link>
+    <pubDate>Tue, 28 Jul 2020 00:00:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>/zh-cn/zookeeper/</guid>
+    <description><![CDATA[Zookeeper 简介 使用场景 ZooKeeper最主要的使用场景是分布式系统的分布式协同服务。 分布式系统服务进程通信方式 通过网络进行信息共享 通过共享存储 Zo]]></description>
+</item><item>
+    <title>领域驱动模型DDD</title>
+    <link>/zh-cn/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E6%A8%A1%E5%9E%8Bddd/</link>
+    <pubDate>Thu, 23 Jul 2020 10:00:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>/zh-cn/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E6%A8%A1%E5%9E%8Bddd/</guid>
+    <description><![CDATA[领域驱动模型DDD 定义 在开发前，通常需要进行大量的业务知识梳理，而后到达软件设计的层面，最后才是开发。而在业务知识梳理的过程中，我们必然会形]]></description>
+</item><item>
+    <title>分布式网络通信</title>
+    <link>/zh-cn/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/</link>
+    <pubDate>Wed, 22 Jul 2020 16:10:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>/zh-cn/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/</guid>
+    <description><![CDATA[分布式架构网络通信 1.基本原理 要实现网络机器间的通讯，首先得来看看计算机系统网络通信的基本原理，在底层层面去看，网络通信需要做的就 是将流从一]]></description>
+</item><item>
+    <title>分布式理论</title>
+    <link>/zh-cn/%E5%88%86%E5%B8%83%E5%BC%8F/</link>
+    <pubDate>Wed, 22 Jul 2020 14:40:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>/zh-cn/%E5%88%86%E5%B8%83%E5%BC%8F/</guid>
+    <description><![CDATA[分布式 1.分布式系统架构 1.1概念 分布式系统是一个硬件或软件组件分布在不同的网络计算机上，彼此之间仅仅通过消息传递进行通信和协调 的系统。 俗的]]></description>
+</item><item>
+    <title>Spring详解</title>
+    <link>/zh-cn/spring/</link>
+    <pubDate>Fri, 17 Jul 2020 22:00:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>/zh-cn/spring/</guid>
+    <description><![CDATA[Spring 概述 简介 Spring 是分层的 full-stack(全栈) 轻量级开源框架，以 IoC 和 AOP 为内核，提供了展现层 Spring MVC 和业务层事务管理等众多的企业级应用技术，还能]]></description>
+</item><item>
+    <title>Tomcat详解</title>
+    <link>/zh-cn/tomcat/</link>
+    <pubDate>Tue, 14 Jul 2020 22:40:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>/zh-cn/tomcat/</guid>
+    <description><![CDATA[Tomcat详解 目录结构 bin：tomocat启动文件 conf 1.logging.properties 日志配置； 2.server.xml服务器端口等配置； 3.tomcat-users.xml tomcat用户角色、权限配]]></description>
+</item><item>
+    <title>Java基础-反射机制</title>
+    <link>/zh-cn/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/</link>
+    <pubDate>Mon, 13 Jul 2020 10:30:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>/zh-cn/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/</guid>
+    <description><![CDATA[反射机制 思考 创建一个对象，有哪几种方式? 1、使用new关键字：这是我们最常见的也是最简单的创建对象的方式 2、使用Clone的方法：无论何时我]]></description>
+</item><item>
+    <title>理解代理模式、静态代理、动态代理、CGlib、AOP</title>
+    <link>/zh-cn/%E7%90%86%E8%A7%A3%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86cglibaop/</link>
+    <pubDate>Mon, 13 Jul 2020 00:00:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>/zh-cn/%E7%90%86%E8%A7%A3%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86cglibaop/</guid>
+    <description><![CDATA[理解代理模式、静态代理、动态代理、CGlib、AOP 代理模式 定义 为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或]]></description>
+</item><item>
+    <title>Linux常用命令</title>
+    <link>/zh-cn/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</link>
+    <pubDate>Sun, 12 Jul 2020 00:00:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>/zh-cn/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
+    <description><![CDATA[Linux常用命令 1、ls命令 就是 list 的缩写，通过 ls 命令不仅可以查看 linux 文件夹包含的文件，而且可以查看文件权限(包括目录、文件夹、文件权限)查]]></description>
+</item></channel>
+</rss>
