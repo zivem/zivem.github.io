@@ -13,7 +13,7 @@
     <author>Author</author>
     <guid>/jvm/</guid>
     <description><![CDATA[<div class="featured-image">
-                <img src="/../img/banner/class.jpg" referrerpolicy="no-referrer">
+                <img src="/img/banner/class.jpg" referrerpolicy="no-referrer">
             </div>JVM基础 如何避免OutOfMemory hotspot 为了避免由新生代对象晋升道老年代，导致老年代空间不足的情况
 在进行Minor GC时，判断之前晋升平均大小，大于老年代剩余空间，直接触发Full GC
 例如：第一次触发MinorGc，有6MB对象晋升，再次MinorGC，老年代剩余空间小于6MB，则直接Full GC.
