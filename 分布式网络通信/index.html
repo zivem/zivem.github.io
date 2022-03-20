@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>分布式网络通信 - Z</title><meta name="Description" content="About Z"><meta property="og:title" content="分布式网络通信" />
+<meta property="og:description" content="分布式架构网络通信 1.基本原理 要实现网络机器间的通讯，首先得来看看计算机系统网络通信的基本原理，在底层层面去看，网络通信需要做的就 是将流从一台计算机传输到另外一台计算机，基于传输协议和网络IO来实现，其中传输协议比较出名的有tcp、 udp等等，tcp、udp都是在基于Socket概念上为某类应用场景而扩展出的传输协议，网络IO，主要有bio、nio、 aio三种方式，所有的分布式应用通讯都基于这个原理而实现，只是为了应用的易用，各种语言通常都会提供一些 更为贴近应用易用的应用层协议。
+2.什么是RPC RPC全称为remote procedure call，即远程过程调用。
+借助RPC可以做到像本地调用一样调用远程服务，是一种进程间的通信方式
+比如两台服务器A和B，A服务器上部署一个应用，B服务器上部署一个应用，A服务器上的应用想调用B服务器上的 应用提供的方法，由于两个应用不在一个内存空间，不能直接调用，所以需要通过网络来表达调用的语义和传达调 用的数据。
+需要注意的是RPC并不是一个具体的技术，而是指整个网络远程调用过程。
+RPC架构 一个完整的RPC架构里面包含了四个核心的组件，分别是Client，Client Stub，Server以及Server Stub，这个Stub 可以理解为存根。
+ 客户端(Client)，服务的调用方。 客户端存根(Client Stub)，存放服务端的地址消息，再将客户端的请求参数打包成网络消息，然后通过网络远程发送给服务方。 服务端(Server)，真正的服务提供者。 服务端存根(Server Stub)，接收客户端发送过来的消息，将消息解包，并调用本地的方法。  RPC调用过程 (1) 客户端(client)以本地调用方式(即以接口的方式)调用服务;
+(2) 客户端存根(client stub)接收到调用后，负责将方法、参数等组装成能够进行网络传输的消息体(将消息体对象序列化为二进制);
+(3) 客户端通过sockets将消息发送到服务端;
+(4) 服务端存根( server stub)收到消息后进行解码(将消息对象反序列化);
+(5) 服务端存根( server stub)根据解码结果调用本地的服务;
+(6) 本地服务执行并将结果返回给服务端存根( server stub);
+(7) 服务端存根( server stub)将返回结果打包成消息(将结果消息对象序列化);
+(8) 服务端(server)通过sockets将消息发送到客户端;
+(9) 客户端存根(client stub)接收到结果消息，并进行解码(将结果消息发序列化);
+(10) 客户端(client)得到最终结果。
+RPC的目标是要把2、3、4、7、8、9这些步骤都封装起来。
+注意:无论是何种类型的数据，最终都需要转换成二进制流在网络上进行传输，数据的发送方需要将对象转换为二 进制流，而数据的接收方则需要把二进制流再恢复为对象。
+在java中RPC框架比较多，常见的有Hessian、gRPC、Thrift、HSF (High Speed Service Framework)、Dubbo 等，其实对 于RPC框架而言，核心模块 就是通讯和序列化" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" /><meta property="og:image" content="47"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-07-22T16:10:00+00:00" />
+<meta property="article:modified_time" content="2020-07-22T16:10:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="47"/>
+
+<meta name="twitter:title" content="分布式网络通信"/>
+<meta name="twitter:description" content="分布式架构网络通信 1.基本原理 要实现网络机器间的通讯，首先得来看看计算机系统网络通信的基本原理，在底层层面去看，网络通信需要做的就 是将流从一台计算机传输到另外一台计算机，基于传输协议和网络IO来实现，其中传输协议比较出名的有tcp、 udp等等，tcp、udp都是在基于Socket概念上为某类应用场景而扩展出的传输协议，网络IO，主要有bio、nio、 aio三种方式，所有的分布式应用通讯都基于这个原理而实现，只是为了应用的易用，各种语言通常都会提供一些 更为贴近应用易用的应用层协议。
+2.什么是RPC RPC全称为remote procedure call，即远程过程调用。
+借助RPC可以做到像本地调用一样调用远程服务，是一种进程间的通信方式
+比如两台服务器A和B，A服务器上部署一个应用，B服务器上部署一个应用，A服务器上的应用想调用B服务器上的 应用提供的方法，由于两个应用不在一个内存空间，不能直接调用，所以需要通过网络来表达调用的语义和传达调 用的数据。
+需要注意的是RPC并不是一个具体的技术，而是指整个网络远程调用过程。
+RPC架构 一个完整的RPC架构里面包含了四个核心的组件，分别是Client，Client Stub，Server以及Server Stub，这个Stub 可以理解为存根。
+ 客户端(Client)，服务的调用方。 客户端存根(Client Stub)，存放服务端的地址消息，再将客户端的请求参数打包成网络消息，然后通过网络远程发送给服务方。 服务端(Server)，真正的服务提供者。 服务端存根(Server Stub)，接收客户端发送过来的消息，将消息解包，并调用本地的方法。  RPC调用过程 (1) 客户端(client)以本地调用方式(即以接口的方式)调用服务;
+(2) 客户端存根(client stub)接收到调用后，负责将方法、参数等组装成能够进行网络传输的消息体(将消息体对象序列化为二进制);
+(3) 客户端通过sockets将消息发送到服务端;
+(4) 服务端存根( server stub)收到消息后进行解码(将消息对象反序列化);
+(5) 服务端存根( server stub)根据解码结果调用本地的服务;
+(6) 本地服务执行并将结果返回给服务端存根( server stub);
+(7) 服务端存根( server stub)将返回结果打包成消息(将结果消息对象序列化);
+(8) 服务端(server)通过sockets将消息发送到客户端;
+(9) 客户端存根(client stub)接收到结果消息，并进行解码(将结果消息发序列化);
+(10) 客户端(client)得到最终结果。
+RPC的目标是要把2、3、4、7、8、9这些步骤都封装起来。
+注意:无论是何种类型的数据，最终都需要转换成二进制流在网络上进行传输，数据的发送方需要将对象转换为二 进制流，而数据的接收方则需要把二进制流再恢复为对象。
+在java中RPC框架比较多，常见的有Hessian、gRPC、Thrift、HSF (High Speed Service Framework)、Dubbo 等，其实对 于RPC框架而言，核心模块 就是通讯和序列化"/>
+<meta name="application-name" content="Z">
+<meta name="apple-mobile-web-app-title" content="Z"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/images/logo/"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" /><link rel="prev" href="/%E5%88%86%E5%B8%83%E5%BC%8F/" /><link rel="next" href="/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E6%A8%A1%E5%9E%8Bddd/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "分布式网络通信",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "\/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1\/"
+        },"image": ["\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "分布式","wordcount":  1134 ,
+        "url": "\/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1\/","datePublished": "2020-07-22T16:10:00+00:00","dateModified": "2020-07-22T16:10:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "\/images\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "lei.zz"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Z"><img
+        class="lazyload logo"
+        src="/svg/loading.min.svg"
+        data-src="/images/logo/logo.png"
+        data-srcset="/images/logo/logo.png, /images/logo/logo.png 1.5x, /images/logo/logo.png 2x"
+        data-sizes="auto"
+        alt="/images/logo/logo.png"
+        title="/images/logo/logo.png" />Z</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/https:/github.com/lei-zz/lei-zz.github.io" title="GitHub"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item language" title="Select Language">English<i class="fas fa-chevron-right fa-fw"></i>
+                        <select class="language-select" id="language-select-desktop" onchange="location = this.value;"><option value="/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" selected>English</option></select>
+                    </a><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Z"><img
+        class="lazyload logo"
+        src="/svg/loading.min.svg"
+        data-src="/images/logo/logo.png"
+        data-srcset="/images/logo/logo.png, /images/logo/logo.png 1.5x, /images/logo/logo.png 2x"
+        data-sizes="auto"
+        alt="/images/logo/logo.png"
+        title="/images/logo/logo.png" />Z</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/https:/github.com/lei-zz/lei-zz.github.io" title="GitHub"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a><a href="javascript:void(0);" class="menu-item" title="Select Language">English<i class="fas fa-chevron-right fa-fw"></i>
+                    <select class="language-select" onchange="location = this.value;"><option value="/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" selected>English</option></select>
+                </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">分布式网络通信</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>lei.zz</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-22">2020-07-22</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1134 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;6 minutes&nbsp;<span id="/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" class="leancloud_visitors" data-flag-title="分布式网络通信">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1基本原理">1.基本原理</a></li>
+    <li><a href="#2什么是rpc">2.什么是RPC</a>
+      <ul>
+        <li><a href="#rpc架构">RPC架构</a></li>
+        <li><a href="#rpc调用过程">RPC调用过程</a></li>
+      </ul>
+    </li>
+    <li><a href="#3rmi">3.RMI</a>
+      <ul>
+        <li><a href="#简介">简介</a>
+          <ul>
+            <li><a href="#远程调用过程">远程调用过程:</a></li>
+            <li><a href="#结果返回过程">结果返回过程:</a></li>
+          </ul>
+        </li>
+        <li><a href="#开发流程">开发流程</a>
+          <ul>
+            <li><a href="#服务端">服务端:</a></li>
+            <li><a href="#客户端">客户端:</a></li>
+          </ul>
+        </li>
+        <li><a href="#代码实现">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#4bionioaio-同步和异步">4.BIO、NIO、AIO 同步和异步</a>
+      <ul>
+        <li><a href="#同步和异步">同步和异步</a></li>
+        <li><a href="#阻塞和非阻塞">阻塞和非阻塞</a>
+          <ul>
+            <li><a href="#bio">BIO</a></li>
+          </ul>
+        </li>
+        <li><a href="#nio">NIO</a>
+          <ul>
+            <li><a href="#nio介绍">NIO介绍</a></li>
+            <li><a href="#特点">特点</a></li>
+          </ul>
+        </li>
+        <li><a href="#aio">AIO</a></li>
+        <li><a href="#5netty">5.Netty</a>
+          <ul>
+            <li><a href="#为什么使用netty">为什么使用Netty</a>
+              <ul>
+                <li><a href="#nio缺点">NIO缺点</a></li>
+                <li><a href="#netty优点">Netty优点</a></li>
+              </ul>
+            </li>
+            <li><a href="#线程模型">线程模型</a></li>
+            <li><a href="#netty核心组件">Netty核心组件</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="分布式架构网络通信">分布式架构网络通信</h1>
+<h2 id="1基本原理">1.基本原理</h2>
+<p>要实现网络机器间的通讯，首先得来看看计算机系统网络通信的基本原理，在底层层面去看，网络通信需要做的就 是将流从一台计算机传输到另外一台计算机，基于传输协议和网络IO来实现，其中传输协议比较出名的有tcp、 udp等等，tcp、udp都是在基于Socket概念上为某类应用场景而扩展出的传输协议，网络IO，主要有bio、nio、 aio三种方式，所有的分布式应用通讯都基于这个原理而实现，只是为了应用的易用，各种语言通常都会提供一些 更为贴近应用易用的应用层协议。</p>
+<h2 id="2什么是rpc">2.什么是RPC</h2>
+<p><strong>RPC全称为remote procedure call，即远程过程调用。</strong></p>
+<p>借助RPC可以做到像本地调用一样调用远程服务，是一种进程间的通信方式</p>
+<p>比如两台服务器A和B，A服务器上部署一个应用，B服务器上部署一个应用，A服务器上的应用想调用B服务器上的 应用提供的方法，由于两个应用不在一个内存空间，不能直接调用，所以需要通过网络来表达调用的语义和传达调 用的数据。</p>
+<p>需要注意的是<strong>RPC并不是一个具体的技术，而是指整个网络远程调用过程</strong>。</p>
+<h3 id="rpc架构">RPC架构</h3>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/assets/img/post/system/rpc.png"
+        data-srcset="/assets/img/post/system/rpc.png, /assets/img/post/system/rpc.png 1.5x, /assets/img/post/system/rpc.png 2x"
+        data-sizes="auto"
+        alt="/assets/img/post/system/rpc.png"
+        title="image-20200722161929048" /></p>
+<p>一个完整的RPC架构里面包含了四个核心的组件，分别是Client，Client Stub，Server以及Server Stub，这个Stub 可以理解为存根。</p>
+<ul>
+<li>客户端(Client)，服务的调用方。</li>
+<li>客户端存根(Client Stub)，存放服务端的地址消息，再将客户端的请求参数打包成网络消息，然后通过网络远程发送给服务方。</li>
+<li>服务端(Server)，真正的服务提供者。</li>
+<li>服务端存根(Server Stub)，接收客户端发送过来的消息，将消息解包，并调用本地的方法。</li>
+</ul>
+<h3 id="rpc调用过程">RPC调用过程</h3>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/assets/img/post/system/rpc_process.png"
+        data-srcset="/assets/img/post/system/rpc_process.png, /assets/img/post/system/rpc_process.png 1.5x, /assets/img/post/system/rpc_process.png 2x"
+        data-sizes="auto"
+        alt="/assets/img/post/system/rpc_process.png"
+        title="image-20200722162133104" /></p>
+<p>(1) 客户端(client)以本地调用方式(即以接口的方式)调用服务;</p>
+<p>(2) 客户端存根(client stub)接收到调用后，负责将方法、参数等组装成能够进行网络传输的消息体(将消息体对象序列化为二进制);</p>
+<p>(3) 客户端通过sockets将消息发送到服务端;</p>
+<p>(4) 服务端存根( server stub)收到消息后进行解码(将消息对象反序列化);</p>
+<p>(5) 服务端存根( server stub)根据解码结果调用本地的服务;</p>
+<p>(6) 本地服务执行并将结果返回给服务端存根( server stub);</p>
+<p>(7) 服务端存根( server stub)将返回结果打包成消息(将结果消息对象序列化);</p>
+<p>(8) 服务端(server)通过sockets将消息发送到客户端;</p>
+<p>(9) 客户端存根(client stub)接收到结果消息，并进行解码(将结果消息发序列化);</p>
+<p>(10) 客户端(client)得到最终结果。</p>
+<p>RPC的目标是要把2、3、4、7、8、9这些步骤都封装起来。</p>
+<p>注意:无论是何种类型的数据，最终都需要转换成二进制流在网络上进行传输，数据的发送方需要将对象转换为二 进制流，而数据的接收方则需要把二进制流再恢复为对象。</p>
+<p>在java中RPC框架比较多，常见的有Hessian、gRPC、Thrift、HSF (High Speed Service Framework)、Dubbo 等，其实对 于RPC框架而言，核心模块 就是通讯和序列化</p>
+<h2 id="3rmi">3.RMI</h2>
+<h3 id="简介">简介</h3>
+<p>Java RMI 指的是远程方法调用 (Remote Method Invocation),是java原生支持的远程调用 ,采用JRMP(Java Remote Messageing protocol)作为通信协议，可以认为是纯java版本的分布式远程调用解决方案， RMI主要用 于不同虚拟机之间的通信，这些虚拟机可以在不同的主机上、也可以在同一个主机上，这里的通信可以理解为一个 虚拟机上的对象调用另一个虚拟机上对象的方法。</p>
+<p>1.客户端:</p>
+<ul>
+<li>存根/桩(Stub):远程对象在客户端上的代理;</li>
+<li>远程引用层(Remote Reference Layer):解析并执行远程引用协议;</li>
+<li>传输层(Transport):发送调用、传递远程方法参数、接收远程方法执行结果。</li>
+</ul>
+<p>2.服务端:</p>
+<ul>
+<li>骨架(Skeleton):读取客户端传递的方法参数，调用服务器方的实际对象方法， 并接收方法执行后的返回值;</li>
+<li>远程引用层(Remote Reference Layer):处理远程引用后向骨架发送远程方法调用;</li>
+<li>传输层(Transport):监听客户端的入站连接，接收并转发调用到远程引用层。</li>
+</ul>
+<p>3.注册表(Registry):以URL形式注册远程对象，并向客户端回复对远程对象的引用。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/assets/img/post/system/rmi.png"
+        data-srcset="/assets/img/post/system/rmi.png, /assets/img/post/system/rmi.png 1.5x, /assets/img/post/system/rmi.png 2x"
+        data-sizes="auto"
+        alt="/assets/img/post/system/rmi.png"
+        title="rmi" /></p>
+<h4 id="远程调用过程">远程调用过程:</h4>
+<blockquote>
+<p>1)客户端从远程服务器的注册表中查询并获取远程对象引用。</p>
+<p>2)桩对象与远程对象具有相同的接口和方法列表，当客户端调用远程对象时，实际上是由相应的桩对象代理完成的。</p>
+<p>3 )远程引用层在将桩的本地引用转换为服务器上对象的远程引用后，再将调用传递给传输层(Transport)，由传输层通 过TCP协议发送调用;</p>
+<p>4)在服务器端，传输层监听入站连接，它一旦接收到客户端远程调用后，就将这个引用转发给其上层的远程引用层;</p>
+<p>5)服务器端的远程引用层将客户端发送的远程应用转换为本地虚拟机的引用后，再将请求传递给骨架(Skeleton);</p>
+<p>6)骨架读取参数，又将请求传递给服务器，最后由服务器进行实际的方法调用。</p>
+</blockquote>
+<h4 id="结果返回过程">结果返回过程:</h4>
+<blockquote>
+<p>1)如果远程方法调用后有返回值，则服务器将这些结果又沿着“骨架-&gt;远程引用层-&gt;传输层”向下传递;</p>
+<p>2)客户端的传输层接收到返回值后，又沿着“传输层-&gt;远程引用层-&gt;桩”向上传递，然后由桩来反序列化这些返回值，并 将最终的结果传递给客户端程序。</p>
+</blockquote>
+<h3 id="开发流程">开发流程</h3>
+<h4 id="服务端">服务端:</h4>
+<p>1)定义Remote子接口，在其内部定义要发布的远程方法，并且这些方法都要Throws RemoteException;</p>
+<p>2)定义实现远程接口，并且继承:UnicastRemoteObject</p>
+<p>3)启动服务器:依次完成注册表的启动和远程对象绑定。</p>
+<h4 id="客户端">客户端:</h4>
+<p>1)通过符合JRMP规范的URL字符串在注册表中获取并强转成Remote子接口对象;</p>
+<p>2)调用这个Remote子接口对象中的某个方法就是为一次远程方法调用行为。</p>
+<h3 id="代码实现">代码实现</h3>
+<p>1.创建远程接口</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">java.rmi.Remote</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.rmi.RemoteException</span><span class="o">;</span>
+<span class="cm">/**
+</span><span class="cm">* 远程服务对象接口必须继承Remote接口;同时方法必须抛出RemoteExceptino异常 */</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Hello</span> <span class="kd">extends</span> <span class="n">Remote</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">sayHello</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">RemoteException</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其中有一个引用对象作为参数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">java.io.Serializable</span><span class="o">;</span>
+<span class="cm">/**
+</span><span class="cm">* 引用对象应该是可序列化对象，这样才能在远程调用的时候:1. 序列化对象 2. 拷贝 3. 在网络中传输
+</span><span class="cm">* 4. 服务端反序列化 5. 获取参数进行方法调用; 这种方式其实是将远程对象引用传递的方式转化为值传递的方式 */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="kd">implements</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+		<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span> 
+  		<span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getAge</span><span class="o">()</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="n">age</span><span class="o">;</span> 
+    <span class="o">}</span>
+		<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setAge</span><span class="o">(</span><span class="kt">int</span> <span class="n">age</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="n">age</span><span class="o">;}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>实现远程服务对象</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">java.rmi.RemoteException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.rmi.server.UnicastRemoteObject</span><span class="o">;</span>
+<span class="cm">/**
+</span><span class="cm">* 远程服务对象实现类写在服务端;必须继承UnicastRemoteObject或其子类
+</span><span class="cm">**/</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloImpl</span> <span class="kd">extends</span> <span class="n">UnicastRemoteObject</span> <span class="kd">implements</span> <span class="n">Hello</span> <span class="o">{</span>
+<span class="cm">/**
+</span><span class="cm">* 因为UnicastRemoteObject的构造方法抛出了RemoteException异常，因此这里默认的构造方法必须写，必须
+</span><span class="cm">声明抛出RemoteException异常 *
+</span><span class="cm">     * @throws RemoteException
+</span><span class="cm">*/</span>
+		<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">serialVersionUID</span> <span class="o">=</span> <span class="n">3638546195897885959L</span><span class="o">;</span>
+    <span class="kd">protected</span> <span class="nf">HelloImpl</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">RemoteException</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">();</span>
+				<span class="c1">// TODO Auto-generated constructor stub
+</span><span class="c1"></span>		<span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">sayHello</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">RemoteException</span> <span class="o">{</span> 	
+      	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;this is server, hello:&#34;</span> <span class="o">+</span> <span class="n">user</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span> 
+        <span class="k">return</span> <span class="s">&#34;success&#34;</span><span class="o">;</span>
+		<span class="o">}</span> 
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>服务端程序</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">java.net.MalformedURLException</span><span class="o">;</span> 
+<span class="kn">import</span> <span class="nn">java.rmi.Naming</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.rmi.RemoteException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.rmi.registry.LocateRegistry</span><span class="o">;</span> 
+<span class="cm">/**
+</span><span class="cm">* 服务端程序
+</span><span class="cm">**/</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Server</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+          <span class="k">try</span> <span class="o">{</span>
+          		<span class="n">Hello</span> <span class="n">hello</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HelloImpl</span><span class="o">();</span> <span class="c1">// 创建一个远程对象，同时也会创建stub对象、skeleton对象 
+</span><span class="c1"></span>            <span class="c1">//本地主机上的远程对象注册表Registry的实例，并指定端口为8888，这一步必不可少(Java默认端口是1099)，必不可缺的一步，缺少注册表创建，则无法绑定对象到远程注册表上
+</span><span class="c1"></span>            <span class="c1">//启动注册服务
+</span><span class="c1"></span>            	<span class="n">LocateRegistry</span><span class="o">.</span><span class="na">createRegistry</span><span class="o">(</span><span class="n">8080</span><span class="o">);</span> 
+          <span class="k">try</span> <span class="o">{</span> 
+            <span class="c1">//绑定的URL标准格式为:rmi://host:port/name(其中协议名可以省略，下面两种写法都是正确的)
+</span><span class="c1"></span>          		<span class="n">Naming</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="s">&#34;//127.0.0.1:8080/zm&#34;</span><span class="o">,</span> <span class="n">hello</span><span class="o">);</span> <span class="c1">//将stub引用绑定到服务地址上 
+</span><span class="c1"></span>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">MalformedURLException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+          <span class="c1">// TODO Auto-generated catch block
+</span><span class="c1"></span>          		<span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span> <span class="o">}</span>
+          		<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;service bind already!!&#34;</span><span class="o">);</span>
+          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">RemoteException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+          <span class="c1">// TODO Auto-generated catch block e.printStackTrace();
+</span><span class="c1"></span>          <span class="o">}</span>
+   <span class="o">}</span> 
+<span class="o">}</span>  
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>客户端程序</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">java.net.MalformedURLException</span><span class="o">;</span> 
+<span class="kn">import</span> <span class="nn">java.rmi.Naming</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.rmi.NotBoundException</span><span class="o">;</span> 
+<span class="kn">import</span> <span class="nn">java.rmi.RemoteException</span><span class="o">;</span>
+<span class="cm">/**
+</span><span class="cm">* 客户端程序 * @author zm *
+</span><span class="cm">*/</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Client</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span> <span class="c1">//在RMI服务注册表中查找名称为RHello的对象，并调用其上的方法
+</span><span class="c1"></span>            <span class="n">Hello</span> <span class="n">hello</span> <span class="o">=</span> <span class="o">(</span><span class="n">Hello</span><span class="o">)</span> <span class="n">Naming</span><span class="o">.</span><span class="na">lookup</span><span class="o">(</span><span class="s">&#34;//127.0.0.1:8080/zm&#34;</span><span class="o">);</span>
+          	<span class="c1">//获取远程对象 
+</span><span class="c1"></span>          	<span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="n">User</span><span class="o">();</span>
+            <span class="n">user</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="s">&#34;james&#34;</span><span class="o">);</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">hello</span><span class="o">.</span><span class="na">sayHello</span><span class="o">(</span><span class="n">user</span><span class="o">));</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">MalformedURLException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// TODO Auto-generated catch block e.printStackTrace();
+</span><span class="c1"></span>        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">RemoteException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// TODO Auto-generated catch block e.printStackTrace();
+</span><span class="c1"></span>        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">NotBoundException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// TODO Auto-generated catch block e.printStackTrace();
+</span><span class="c1"></span>        <span class="o">}</span> 
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="5">
+<li>启动服务端程序</li>
+<li>客户端调用</li>
+</ol>
+<h2 id="4bionioaio-同步和异步">4.BIO、NIO、AIO 同步和异步</h2>
+<h3 id="同步和异步">同步和异步</h3>
+<p><strong>同步(synchronize)、异步(asychronize)是指应用程序和内核的交互而言的.</strong></p>
+<p><strong>同步</strong>:</p>
+<p>指用户进程触发IO操作等待或者轮训的方式查看IO操作是否就绪。</p>
+<p>同步举例:</p>
+<p>银行取钱,我自己去取钱,取钱的过程中等待.</p>
+<p><strong>异步</strong>:</p>
+<p>当一个异步进程调用发出之后，调用者不会立刻得到结果。而是在调用发出之后，被调用者通过状态、通知来通知 调用者，或者通过回调函数来处理这个调用。</p>
+<p>使用异步IO时，Java将IO读写委托给OS处理，需要将数据缓冲区地址和大小传给OS，OS需要支持异步IO操作 举个例子:</p>
+<p>异步举例:</p>
+<p>我请朋友帮我取钱,他取到钱后返回给我. (委托给操作系统OS, OS需要支持IO异步API)</p>
+<h3 id="阻塞和非阻塞">阻塞和非阻塞</h3>
+<p><strong>阻塞和非阻塞是针对于进程访问数据的时候,根据IO操作的就绪状态来采取不同的方式.</strong></p>
+<p>简单点说就是一种读写操作方法的实现方式. 阻塞方式下读取和写入将一直等待, 而非阻塞方式下,读取和写入方法 会理解返回一个状态值.</p>
+<p>举个例子:</p>
+<p><strong>阻塞</strong>:</p>
+<p>ATM机排队取款，你只能等待排队取款(使用阻塞IO的时候，Java调用会一直阻塞到读写完成才返回。)</p>
+<p><strong>非阻塞</strong>:</p>
+<p>柜台取款，取个号，然后坐在椅子上做其他事，等广播通知，没到你的号你就不能去，但你可以不断的问大堂经理 排到了没有。(使用非阻塞IO时，如果不能读写Java调用会马上返回，当IO事件分发器会通知可读写时再继续进行 读写，不断循环直到读写完成)</p>
+<p>例子</p>
+<p>老张煮开水。 老张，水壶两把(普通水壶，简称水壶;会响的水壶，简称响水壶)。</p>
+<p>1 老张把水壶放到火上，站立着等水开。(同步阻塞)</p>
+<p>2 老张把水壶放到火上，去客厅看电视，时不时去厨房看看水开没有。(同步非阻塞)</p>
+<p>3 老张把响水壶放到火上，立等水开。(异步阻塞)</p>
+<p>4 老张把响水壶放到火上，去客厅看电视，水壶响之前不再去看它了，响了再去拿壶。(异步非阻塞)</p>
+<h4 id="bio">BIO</h4>
+<p><strong>同步阻塞IO，B代表blocking</strong></p>
+<p>服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理，如果这个连 接不做任何事情会造成不必要的线程开销，当然可以通过线程池机制改善。</p>
+<p>适用场景:Java1.4之前唯一的选择，简单易用但资源开销太高</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/assets/img/post/system/bio.png"
+        data-srcset="/assets/img/post/system/bio.png, /assets/img/post/system/bio.png 1.5x, /assets/img/post/system/bio.png 2x"
+        data-sizes="auto"
+        alt="/assets/img/post/system/bio.png"
+        title="image-20200722165654984" /></p>
+<p>服务端</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.net.InetSocketAddress</span><span class="o">;</span> 
+<span class="kn">import</span> <span class="nn">java.net.ServerSocket</span><span class="o">;</span> 
+<span class="kn">import</span> <span class="nn">java.net.Socket</span><span class="o">;</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">IOServer</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="c1">//首先创建了一个serverSocket
+</span><span class="c1"></span>        <span class="n">ServerSocket</span> <span class="n">serverSocket</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ServerSocket</span><span class="o">();</span> 
+      	<span class="n">serverSocket</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="s">&#34;127.0.0.1&#34;</span><span class="o">,</span><span class="n">8081</span><span class="o">));</span> 
+      	<span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">){</span>
+          <span class="n">Socket</span> <span class="n">socket</span> <span class="o">=</span> <span class="n">serverSocket</span><span class="o">.</span><span class="na">accept</span><span class="o">();</span> <span class="c1">//同步阻塞 
+</span><span class="c1"></span>          <span class="k">new</span> <span class="n">Thread</span><span class="o">(()-&gt;{</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[</span><span class="n">1024</span><span class="o">];</span>
+                <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">().</span><span class="na">read</span><span class="o">(</span><span class="n">bytes</span><span class="o">);</span> 
+                <span class="c1">//同步阻塞 
+</span><span class="c1"></span>                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">bytes</span><span class="o">,</span><span class="n">0</span><span class="o">,</span><span class="n">len</span><span class="o">));</span> 	
+                <span class="n">socket</span><span class="o">.</span><span class="na">getOutputStream</span><span class="o">().</span><span class="na">write</span><span class="o">(</span><span class="n">bytes</span><span class="o">,</span><span class="n">0</span><span class="o">,</span><span class="n">len</span><span class="o">);</span> 
+                <span class="n">socket</span><span class="o">.</span><span class="na">getOutputStream</span><span class="o">().</span><span class="na">flush</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span> 
+              <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+            <span class="o">}</span> 
+          <span class="o">}).</span><span class="na">start</span><span class="o">();</span> 
+        <span class="o">}</span>
+    <span class="o">}</span> 
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>客户端</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.net.Socket</span><span class="o">;</span> 
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">IOClient</span> <span class="o">{</span>
+		<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span> 
+      	<span class="n">Socket</span> <span class="n">socket</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Socket</span><span class="o">(</span><span class="s">&#34;127.0.0.1&#34;</span><span class="o">,</span><span class="n">8081</span><span class="o">);</span> 	
+      	<span class="n">socket</span><span class="o">.</span><span class="na">getOutputStream</span><span class="o">().</span><span class="na">write</span><span class="o">(</span><span class="s">&#34;hello&#34;</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span> 
+      	<span class="n">socket</span><span class="o">.</span><span class="na">getOutputStream</span><span class="o">().</span><span class="na">flush</span><span class="o">();</span> 
+      	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;server send back data =====&#34;</span><span class="o">);</span> 
+      	<span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">byte</span><span class="o">[</span><span class="n">1024</span><span class="o">];</span>
+				<span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">().</span><span class="na">read</span><span class="o">(</span><span class="n">bytes</span><span class="o">);</span> 
+      	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">bytes</span><span class="o">,</span><span class="n">0</span><span class="o">,</span><span class="n">len</span><span class="o">));</span> 
+      	<span class="n">socket</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="nio">NIO</h3>
+<h4 id="nio介绍">NIO介绍</h4>
+<p>同步非阻塞IO (non-blocking IO / new io)是指JDK 1.4 及以上版本。 服务器实现模式为一个请求一个通道，即客户端发送的连接请求都会注册到多路复用器上，多路复用器轮询到连接有IO请求时才启动一个线程进行处理。</p>
+<p><strong>通道(Channels)</strong></p>
+<p>NIO 新引入的最重要的抽象是通道的概念。Channel 数据连接的通道。 数据可以从Channel读到Buffer中，也可以 从Buffer 写到Channel中 .</p>
+<p><strong>缓冲区(Buffers)</strong></p>
+<p>通道channel可以向缓冲区Buffer中写数据，也可以像buffer中存数据。</p>
+<p><strong>选择器(Selector)</strong></p>
+<p>使用选择器，借助单一线程，就可对数量庞大的活动 I/O 通道实时监控和维护。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/assets/img/post/system/nio.png"
+        data-srcset="/assets/img/post/system/nio.png, /assets/img/post/system/nio.png 1.5x, /assets/img/post/system/nio.png 2x"
+        data-sizes="auto"
+        alt="/assets/img/post/system/nio.png"
+        title="image-20200722170518459" /></p>
+<h4 id="特点">特点</h4>
+<p>当一个连接创建后，不会需要对应一个线程，这个连接会被注册到多路复用器，所以一个连接只需要一个线程即可，所有的连接需要一个线程就可以操作，该线程的多路复用器会轮询，发现连接有请求时，才开启一个线程处 理。</p>
+<p><strong>BIO和NIO的区别</strong></p>
+<ul>
+<li>BIO是每个新连接都创建一个新线程，NIO新连接先进行注册，然后使用一个线程处理所有新连接；</li>
+<li>BIO读取是以字节形式，NIO是以字节快读取，效率更高。</li>
+</ul>
+<h3 id="aio">AIO</h3>
+<p>异步非阻塞IO。A代表asynchronize</p>
+<p>当有流可以读时,操作系统会将可以读的流传入read方法的缓冲区,并通知应用程序,对于写操作,OS将write方法的流 写入完毕是操作系统会主动通知应用程序。因此read和write都是异步 的，完成后会调用回调函数。</p>
+<p>使用场景:连接数目多且连接比较长(重操作)的架构，比如相册服务器。重点调用了OS参与并发操作，编程比 较复杂。Java7开始支持</p>
+<h3 id="5netty">5.Netty</h3>
+<p>Netty 是由 JBOSS 提供一个异步的、 基于事件驱动的网络编程框架。</p>
+<p>Netty 可以帮助你快速、 简单的开发出一 个网络应用， 相当于简化和流程化了 NIO 的开发过程。 作为当前最流行 的 NIO 框架， Netty 在互联网领域、 大数据分布式计算领域、 游戏行业、 通信行业等获得了广泛的应用， 知名 的 Elasticsearch 、 Dubbo 框架内部都采用了 Netty。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/assets/img/post/system/netty.png"
+        data-srcset="/assets/img/post/system/netty.png, /assets/img/post/system/netty.png 1.5x, /assets/img/post/system/netty.png 2x"
+        data-sizes="auto"
+        alt="/assets/img/post/system/netty.png"
+        title="image-20200722171154517" /></p>
+<h4 id="为什么使用netty">为什么使用Netty</h4>
+<h5 id="nio缺点">NIO缺点</h5>
+<ul>
+<li>NIO 的类库和 API 繁杂，使用麻烦。你需要熟练掌握 Selector、ServerSocketChannel、SocketChannel、 ByteBuffer 等.</li>
+<li>可靠性不强，开发工作量和难度都非常大</li>
+<li>NIO 的 Bug。例如 Epoll Bug，它会导致 Selector 空轮询，最终导致 CPU 100%。</li>
+</ul>
+<h5 id="netty优点">Netty优点</h5>
+<ul>
+<li>
+<p>对各种传输协议提供统一的 API</p>
+</li>
+<li>
+<p>高度可定制的线程模型——单线程、一个或多个线程池</p>
+</li>
+<li>
+<p>更好的吞吐量，更低的等待延迟</p>
+</li>
+<li>
+<p>更少的资源消耗</p>
+</li>
+<li>
+<p>最小化不必要的内存拷贝</p>
+</li>
+</ul>
+<h4 id="线程模型">线程模型</h4>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/assets/img/post/system/netty_thread.png"
+        data-srcset="/assets/img/post/system/netty_thread.png, /assets/img/post/system/netty_thread.png 1.5x, /assets/img/post/system/netty_thread.png 2x"
+        data-sizes="auto"
+        alt="/assets/img/post/system/netty_thread.png"
+        title="image-20200722171514037" /></p>
+<p>Netty 抽象出两组线程池， BossGroup 专门负责接收客 户端连接， WorkerGroup 专门负责网络读写操作。</p>
+<p>NioEventLoop 表示一个不断循环执行处理 任务的线程， 每个 NioEventLoop 都有一个 selector， 用于监听绑定 在其上的 socket 网络通道。</p>
+<p>NioEventLoop 内部采用串行化设计， 从消息的读取-&gt;解码-&gt;处理-&gt;编码-&gt;发送， 始 终由 IO 线 程 NioEventLoop 负责。</p>
+<h4 id="netty核心组件">Netty核心组件</h4>
+<p><strong>ChannelHandler 及其实现类</strong></p>
+<p>ChannelHandler 接口定义了许多事件处理的方法， 我们可以通过重写这些方法去实现具 体的业务逻辑</p>
+<p>我们经常需要自定义一个 Handler 类去继承 ChannelInboundHandlerAdapter， 然后通过 重写相应方法实现业 务逻辑， 我们接下来看看一般都需要重写哪些方法:</p>
+<blockquote>
+<p>public void channelActive(ChannelHandlerContext ctx)， 通道就绪事件
+public void channelRead(ChannelHandlerContext ctx, Object msg)， 通道读取数据事件
+public void channelReadComplete(ChannelHandlerContext ctx) ， 数据读取完毕事件
+public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)， 通道发生异常事件</p>
+</blockquote>
+<p><strong>ChannelPipeline</strong></p>
+<p>ChannelPipeline 是一个 Handler 的集合， 它负责处理和拦截 inbound 或者 outbound 的事 件和操作， 相当于</p>
+<p>一个贯穿 Netty 的链。</p>
+<blockquote>
+<p>ChannelPipeline addFirst(ChannelHandler&hellip; handlers)， 把一个业务处理类(handler) 添加到链中的第一 个位置
+ChannelPipeline addLast(ChannelHandler&hellip; handlers)， 把一个业务处理类(handler) 添加到链中的最后 一个位置</p>
+</blockquote>
+<p><strong>ChannelHandlerContext</strong></p>
+<p>这 是 事 件 处 理 器 上 下 文 对 象 ， Pipeline 链 中 的 实 际 处 理 节 点 。 每 个 处 理 节 点 ChannelHandlerContext 中 包 含 一 个 具 体 的 事 件 处 理 器 ChannelHandler ， 同 时 ChannelHandlerContext 中也绑定了对应的 pipeline 和 Channel 的信息，方便对 ChannelHandler 进行调用。 常用方法如下所示</p>
+<blockquote>
+<p>ChannelFuture close()， 关闭通道
+ChannelOutboundInvoker flush()， 刷新
+ChannelFuture writeAndFlush(Object msg) ， 将 数 据 写 到 ChannelPipeline 中 当 前  ChannelHandler 的下一个 ChannelHandler 开始处理(出站)</p>
+</blockquote>
+<p><strong>ChannelFuture</strong></p>
+<p>表示 Channel 中异步 I/O 操作的结果， 在 Netty 中所有的 I/O 操作都是异步的， I/O 的调 用会直接返回， 调用者</p>
+<p>并不能立刻获得结果， 但是可以通过 ChannelFuture 来获取 I/O 操作 的处理状态。 常用方法如下所示:</p>
+<blockquote>
+<p>Channel channel()， 返回当前正在进行 IO 操作的通道</p>
+<p>ChannelFuture sync()， 等待异步操作执行完毕</p>
+</blockquote>
+<p><strong>EventLoopGroup 和其实现类 NioEventLoopGroup</strong></p>
+<p>EventLoopGroup 是一组 EventLoop 的抽象， Netty 为了更好的利用多核 CPU 资源， 一般 会有多个 EventLoop 同时工作， 每个 EventLoop 维护着一个 Selector 实例。 EventLoopGroup 提供 next 接口， 可以从组里面按照一 定规则获取其中一个 EventLoop 来处理任务。 在 Netty 服务器端编程中， 我们一般都需要提供两个 EventLoopGroup， 例如: BossEventLoopGroup 和 WorkerEventLoopGroup。</p>
+<blockquote>
+<p>public NioEventLoopGroup()， 构造方法
+public Future&lt;?&gt; shutdownGracefully()， 断开连接， 关闭线程</p>
+</blockquote>
+<p><strong>ServerBootstrap 和 Bootstrap</strong></p>
+<p>ServerBootstrap 是 Netty 中的服务器端启动助手，通过它可以完成服务器端的各种配置; Bootstrap 是 Netty 中</p>
+<p>的客户端启动助手， 通过它可以完成客户端的各种配置。 常用方法如下 所示:</p>
+<blockquote>
+<p>public ServerBootstrap group(EventLoopGroup parentGroup, EventLoopGroup childGroup)，该方法用于 服务器端， 用来设置两个 EventLoop
+public B group(EventLoopGroup group) ， 该方法用于客户端， 用来设置一个 EventLoop
+public B channel(Class&lt;? extends C&gt; channelClass)， 该方法用来设置一个服务器端的通道实现</p>
+<p>public <T> B option(ChannelOption<T> option, T value)， 用来给 ServerChannel 添加配置
+public <T> ServerBootstrap childOption(ChannelOption<T> childOption, T value)， 用来给接收到的 通道添加配置
+public ServerBootstrap childHandler(ChannelHandler childHandler)， 该方法用来设置业务处理类(自定 义的 handler)
+public ChannelFuture bind(int inetPort) ， 该方法用于服务器端， 用来设置占用的端口号
+public ChannelFuture connect(String inetHost, int inetPort) 该方法用于客户端， 用来连接服务器端</p>
+</blockquote>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2020-07-22</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" data-title="分布式网络通信" data-hashtags="分布式"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" data-hashtag="分布式"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" data-title="分布式网络通信"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" data-title="分布式网络通信"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" data-title="分布式网络通信"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/%E5%88%86%E5%B8%83%E5%BC%8F/" class="prev" rel="prev" title="分布式理论"><i class="fas fa-angle-left fa-fw"></i>分布式理论</a>
+            <a href="/%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E6%A8%A1%E5%9E%8Bddd/" class="next" rel="next" title="领域驱动模型DDD">领域驱动模型DDD<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">lei.zz</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{"valine":{"appId":"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI","appKey":"WBmoGyJtbqUswvfLh6L8iEBr","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"en","pageSize":10,"placeholder":"Your comment ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"search":{"algoliaAppID":"DKS4FQ4NM8","algoliaIndex":"new-index-1647619849","algoliaSearchKey":"06463a93a6297b575b6669a10a43b650","highlightTag":"em","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
