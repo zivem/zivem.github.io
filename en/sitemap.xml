@@ -130,7 +130,7 @@
                     /></url><url>
             <loc>/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</loc><lastmod>2020-07-12T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>/java%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</loc><lastmod>2020-07-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>/about/</loc><lastmod>2022-03-15T22:55:27&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
+            <loc>/about/</loc><priority>0</priority><xhtml:link
                         rel="alternate"
                         hreflang="zh-cn"
                         href="/zh-cn/about/"
